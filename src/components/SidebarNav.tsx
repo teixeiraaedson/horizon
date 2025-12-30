@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { NavLink } from "react-router-dom";
 import {
   Sidebar,
@@ -21,6 +22,7 @@ import { ReactNode } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/app/auth/AuthContext";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 type Item = { to: string; label: string; icon: ReactNode };
 
@@ -42,7 +44,7 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
 
   return (
     <SidebarProvider>
-      <Sidebar collapsible="icon" className="bg-[var(--surface0)] border-r border-[var(--border)]">
+      <Sidebar collapsible="icon" className="bg-[var(--hz-surface0)] border-r border-[var(--hz-border)]">
         <SidebarHeader className="px-2 pt-3 pb-2">
           <div className="flex items-center justify-between">
             <div>
@@ -63,11 +65,13 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
                     <SidebarMenuButton
                       asChild
                       isActive={active}
-                      className={active ? "nav-pill-active" : ""}
+                      className={cn(active ? "nav-pill-active" : "", "transition-colors")}
                     >
                       <NavLink to={it.to}>
-                        {it.icon}
-                        <span>{it.label}</span>
+                        {React.cloneElement(it.icon as React.ReactElement, {
+                          className: cn("h-4 w-4", active ? "text-[var(--hz-blue)]" : "text-muted-foreground"),
+                        })}
+                        <span className={cn(active ? "text-foreground" : "text-muted-foreground")}>{it.label}</span>
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -76,10 +80,11 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
             </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter className="border-t border-[var(--border)]">
+        <SidebarFooter className="border-t border-[var(--hz-border)]">
           <div className="p-2">
-            <button className="w-full text-left text-[12px] px-3 py-2 rounded-md border border-[var(--border)] hover:border-[var(--borderHover)] card-sheen" style={{ color: "var(--orange)" }}>
-              • Sandbox Mode
+            <button className="w-full text-left text-[12px] px-3 py-2 rounded-lg border border-[var(--hz-border)] bg-[rgba(148,163,184,0.08)] hover:border-[var(--hz-border-strong)] card-sheen inline-flex items-center gap-2">
+              <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: "var(--hz-orange)" }} />
+              <span className="text-[var(--hz-orange)]">Sandbox Mode</span>
             </button>
             <div className="mt-3 text-xs text-muted-foreground">
               <div className="flex items-center justify-between">

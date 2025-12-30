@@ -22,7 +22,7 @@ export const SearchInput = ({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         aria-label={placeholder}
-        className="pl-9 input-dark"
+        className="pl-9 input-dark rounded-[12px]"
       />
     </div>
   );
