@@ -55,9 +55,6 @@ export const AppHeader = () => {
             <div className="text-xs text-muted-foreground -mt-0.5">Treasury Management Suite</div>
           </div>
           {settings.mockMode && <Badge className="ml-2" variant="secondary">Mock Mode</Badge>}
-          <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-semibold">
-            TW PROBE
-          </span>
           <div className="ml-6">
             <div className="text-sm font-medium">{meta.title}</div>
             <div className="text-xs text-muted-foreground">{meta.subtitle}</div>

@@ -70,9 +70,3 @@ html, body{
   min-height: 100vh;
   background: linear-gradient(180deg, var(--hz-bg0) 0%, var(--hz-bg1) 100%) !important;
 }
-
-/* PLAIN CSS PROBE: force dark background and light text globally even if Tailwind is broken */
-html, body, #root {
-  background: #070B14 !important;
-  color: #F8FAFC !important;
-}
