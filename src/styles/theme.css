@@ -101,4 +101,138 @@
     text-decoration: underline;
   }
 
-  /
+  /* Surfaces */
+  .surface-0,
+  .surface-1,
+  .surface-2 {
+    border: 1px solid var(--borderA) !important;
+    border-radius: 14px !important;
+  }
+
+  .surface-0 {
+    background-color: var(--surface0) !important;
+    box-shadow: var(--shadowLg);
+  }
+
+  .surface-1 {
+    background-color: var(--surface1) !important;
+    box-shadow: var(--shadowLg);
+  }
+
+  /* "Glass" surface used by Settings cards */
+  .surface-2 {
+    background-color: var(--surfaceGlass) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: var(--shadowMd);
+  }
+
+  .surface-overlay {
+    background-color: var(--surfaceGlass);
+  }
+
+  /* Card sheen */
+  .card-sheen {
+    position: relative;
+    overflow: hidden;
+  }
+  .card-sheen::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.04),
+      rgba(255, 255, 255, 0)
+    );
+    border-radius: inherit;
+  }
+
+  .card-hover {
+    transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-2px);
+    border-color: var(--borderHoverA) !important;
+  }
+
+  /* Accent rings */
+  .glow-blue {
+    box-shadow: var(--glowBlue);
+  }
+  .glow-green {
+    box-shadow: var(--glowGreen);
+  }
+  .glow-orange {
+    box-shadow: var(--glowOrange);
+  }
+
+  /* Topbar */
+  .topbar {
+    background: linear-gradient(
+      to bottom,
+      rgba(11, 18, 32, 0.86),
+      rgba(11, 18, 32, 0.62)
+    );
+    border-bottom: 1px solid var(--borderA);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  /* Sidebar active pill */
+  .nav-pill-active {
+    background: linear-gradient(180deg, rgba(56, 189, 248, 0.16), rgba(56, 189, 248, 0.07));
+    border: 1px solid rgba(56, 189, 248, 0.35);
+  }
+
+  /* Data table */
+  .data-table thead tr {
+    background-color: rgba(148, 163, 184, 0.08);
+  }
+  .data-table tbody tr {
+    border-top: 1px solid rgba(148, 163, 184, 0.1);
+  }
+  .data-table tbody tr:hover {
+    background-color: rgba(56, 189, 248, 0.06);
+  }
+
+  /* Status badges */
+  .badge-completed {
+    background-color: rgba(34, 197, 94, 0.14);
+    color: #8ce9a6;
+    border: 1px solid rgba(34, 197, 94, 0.35);
+  }
+  .badge-pending {
+    background-color: rgba(245, 158, 11, 0.14);
+    color: #f7c779;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+  }
+  .badge-approved {
+    background-color: rgba(56, 189, 248, 0.14);
+    color: #8bd2fd;
+    border: 1px solid rgba(56, 189, 248, 0.35);
+  }
+  .badge-rejected {
+    background-color: rgba(239, 68, 68, 0.14);
+    color: #f7a1a1;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+  }
+  .badge-created {
+    background-color: rgba(148, 163, 184, 0.12);
+    color: #cbd5e1;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+  }
+
+  /* Inputs (works with shadcn Input component) */
+  .input-dark {
+    background-color: rgba(2, 6, 12, 0.35) !important;
+    border-color: var(--borderA) !important;
+  }
+  .input-dark:focus,
+  .input-dark:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+    border-color: rgba(56, 189, 248, 0.45) !important;
+  }
+}
