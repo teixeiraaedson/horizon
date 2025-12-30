@@ -127,7 +127,7 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      <Drawer open={!!selected} onClose={() => setSelected(null)}>
+      <Drawer open={!!selected} onOpenChange={(o) => { if (!o) setSelected(null); }}>
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>Transaction Details</DrawerTitle>

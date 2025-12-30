@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { User } from "lucide-react";
+import logo from "@/assets/horizon-logo.png";
 
 export const AppHeader = () => {
   const { user, switchRole } = useAuth();
@@ -14,7 +15,7 @@ export const AppHeader = () => {
   return (
     <div className="flex items-center justify-between px-4 py-2 border-b bg-white/60 backdrop-blur supports-[backdrop-filter]:bg-white/40 sticky top-0 z-20">
       <div className="flex items-center gap-3">
-        <img src="/src/assets/horizon-logo.png" className="h-7 w-auto" alt="Horizon Logo" />
+        <img src={logo} className="h-7 w-auto" alt="Horizon Logo" />
         <div className="leading-tight">
           <div className="font-semibold">Horizon</div>
           <div className="text-xs text-muted-foreground -mt-0.5">Treasury Management Suite</div>

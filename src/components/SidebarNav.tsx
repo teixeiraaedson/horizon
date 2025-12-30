@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/sidebar";
 import { LayoutDashboard, Landmark, ArrowRightLeft, Wallet, ShieldCheck, FileText, Webhook, Settings } from "lucide-react";
 import { ReactNode } from "react";
+import { useLocation } from "react-router-dom";
 
 type Item = { to: string; label: string; icon: ReactNode };
 
@@ -33,6 +34,7 @@ const items: Item[] = [
 ];
 
 export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) => {
+  const location = useLocation();
   return (
     <SidebarProvider>
       <Sidebar collapsible="icon">
@@ -46,8 +48,8 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
             <SidebarMenu>
               {items.map((it) => (
                 <SidebarMenuItem key={it.to}>
-                  <SidebarMenuButton asChild isActive={false}>
-                    <NavLink to={it.to} className={({ isActive }) => (isActive ? "data-[active=true]" : "")}>
+                  <SidebarMenuButton asChild isActive={location.pathname === it.to}>
+                    <NavLink to={it.to}>
                       {it.icon}
                       <span>{it.label}</span>
                     </NavLink>
