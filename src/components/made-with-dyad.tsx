@@ -5,7 +5,7 @@ export const MadeWithDyad = () => {
         href="https://www.dyad.sh/"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-sm text-muted-foreground hover:text-[var(--text)]"
+        className="text-xs text-muted-foreground hover:text-[var(--textA)] transition-colors"
       >
         Made with Dyad
       </a>
