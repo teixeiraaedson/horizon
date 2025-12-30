@@ -20,10 +20,10 @@ export default function Wallets() {
       <div className="flex justify-end mb-2">
         <Button variant="outline" onClick={() => downloadCSV(rows as any, "wallet_balances.csv")}>Export CSV</Button>
       </div>
-      <Card>
+      <Card className="surface-2 card-hover">
         <CardHeader><CardTitle>Wallets</CardTitle></CardHeader>
         <CardContent className="overflow-x-auto">
-          <Table>
+          <Table className="table-modern w-full">
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>

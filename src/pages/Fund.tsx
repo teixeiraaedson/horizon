@@ -40,14 +40,14 @@ export default function Fund() {
 
   return (
     <Layout>
-      <Card className="max-w-xl">
+      <Card className="surface-2 card-hover max-w-xl">
         <CardHeader>
           <CardTitle>Fund</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label className="block text-sm mb-1">Destination Wallet</label>
+              <label className="block text-sm mb-1 text-muted-foreground">Destination Wallet</label>
               <Select onValueChange={(v) => form.setValue("walletId", v)} value={form.watch("walletId")}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select wallet" />
@@ -61,10 +61,10 @@ export default function Fund() {
               <p className="text-xs text-muted-foreground mt-1">Move with certainty. Arrive with confidence.</p>
             </div>
             <div>
-              <label className="block text-sm mb-1">Amount (USD)</label>
-              <Input type="number" step="1" {...form.register("amount", { valueAsNumber: true })} />
+              <label className="block text-sm mb-1 text-muted-foreground">Amount (USD)</label>
+              <Input className="bg-background/60 border-muted focus-visible:ring-2 focus-visible:ring-ring" type="number" step="1" {...form.register("amount", { valueAsNumber: true })} />
             </div>
-            <Button type="submit">Fund</Button>
+            <Button type="submit" className="hover:shadow-[0_0_24px_rgba(56,189,248,0.10)]">Fund</Button>
           </form>
         </CardContent>
       </Card>

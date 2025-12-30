@@ -45,14 +45,14 @@ export default function Send() {
 
   return (
     <Layout>
-      <Card className="max-w-xl">
+      <Card className="surface-2 card-hover max-w-xl">
         <CardHeader>
           <CardTitle>Send</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label className="block text-sm mb-1">From Wallet</label>
+              <label className="block text-sm mb-1 text-muted-foreground">From Wallet</label>
               <Select onValueChange={(v) => form.setValue("fromWalletId", v)} value={form.watch("fromWalletId")}>
                 <SelectTrigger><SelectValue placeholder="Select wallet" /></SelectTrigger>
                 <SelectContent>
@@ -61,7 +61,7 @@ export default function Send() {
               </Select>
             </div>
             <div>
-              <label className="block text-sm mb-1">To Wallet</label>
+              <label className="block text-sm mb-1 text-muted-foreground">To Wallet</label>
               <Select onValueChange={(v) => form.setValue("toWalletId", v)} value={form.watch("toWalletId")}>
                 <SelectTrigger><SelectValue placeholder="Select wallet" /></SelectTrigger>
                 <SelectContent>
@@ -71,10 +71,10 @@ export default function Send() {
               <p className="text-xs text-muted-foreground mt-1">Release requires a second set of eyes.</p>
             </div>
             <div>
-              <label className="block text-sm mb-1">Amount (USD)</label>
-              <Input type="number" step="1" {...form.register("amount", { valueAsNumber: true })} />
+              <label className="block text-sm mb-1 text-muted-foreground">Amount (USD)</label>
+              <Input className="bg-background/60 border-muted focus-visible:ring-2 focus-visible:ring-ring" type="number" step="1" {...form.register("amount", { valueAsNumber: true })} />
             </div>
-            <Button type="submit">Send</Button>
+            <Button type="submit" className="hover:shadow-[0_0_24px_rgba(56,189,248,0.10)]">Send</Button>
           </form>
         </CardContent>
       </Card>

@@ -21,10 +21,10 @@ export default function AuditTrail() {
       <div className="flex justify-end mb-2">
         <Button variant="outline" onClick={() => downloadCSV(events as any, "audit_events.csv")}>Export CSV</Button>
       </div>
-      <Card>
+      <Card className="surface-2 card-hover">
         <CardHeader><CardTitle>Audit Trail</CardTitle></CardHeader>
         <CardContent className="overflow-x-auto">
-          <Table>
+          <Table className="table-modern w-full">
             <TableHeader>
               <TableRow>
                 <TableHead>Time</TableHead>

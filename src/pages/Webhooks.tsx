@@ -40,16 +40,16 @@ export default function Webhooks() {
     <Layout>
       <div className="flex items-end gap-2 mb-4">
         <div className="flex-1 max-w-sm">
-          <label className="block text-sm mb-1">Transaction ID</label>
-          <Input value={txId} onChange={(e) => setTxId(e.target.value)} placeholder="Enter transaction id" />
+          <label className="block text-sm mb-1 text-muted-foreground">Transaction ID</label>
+          <Input value={txId} onChange={(e) => setTxId(e.target.value)} placeholder="Enter transaction id" className="bg-background/60 border-muted focus-visible:ring-2 focus-visible:ring-ring" />
         </div>
-        <Button onClick={simulate}>Simulate Event</Button>
+        <Button onClick={simulate} className="hover:shadow-[0_0_24px_rgba(56,189,248,0.10)]">Simulate Event</Button>
         <Button variant="outline" onClick={() => downloadCSV(events as any, "webhook_events.csv")}>Export CSV</Button>
       </div>
-      <Card>
+      <Card className="surface-2 card-hover">
         <CardHeader><CardTitle>Webhook Events</CardTitle></CardHeader>
         <CardContent className="overflow-x-auto">
-          <Table>
+          <Table className="table-modern w-full">
             <TableHeader>
               <TableRow>
                 <TableHead>ID</TableHead>

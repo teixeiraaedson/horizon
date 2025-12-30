@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/app/auth/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
+import { StatusBadge } from "@/components/StatusBadge";
 
 export default function ReleaseQueue() {
   const mock = useMockStore();
@@ -45,13 +46,14 @@ export default function ReleaseQueue() {
 
   return (
     <Layout>
-      <Card>
+      <Card className="surface-2 card-hover">
         <CardHeader><CardTitle>Release Queue</CardTitle></CardHeader>
         <CardContent className="overflow-x-auto">
-          <Table>
+          <Table className="table-modern w-full">
             <TableHeader>
               <TableRow>
                 <TableHead>Tx</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Amount</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
@@ -60,6 +62,7 @@ export default function ReleaseQueue() {
               {items.map((t) => (
                 <TableRow key={t.id}>
                   <TableCell className="font-mono text-xs">{t.id}</TableCell>
+                  <TableCell><StatusBadge status={t.status} /></TableCell>
                   <TableCell>${t.amount.toLocaleString()}</TableCell>
                   <TableCell>
                     <Button size="sm" className="mr-2" onClick={() => { setSelected(t); }}>Decide</Button>
@@ -67,7 +70,7 @@ export default function ReleaseQueue() {
                 </TableRow>
               ))}
               {!items.length && (
-                <TableRow><TableCell colSpan={3} className="text-muted-foreground">Nothing to release</TableCell></TableRow>
+                <TableRow><TableCell colSpan={4} className="text-muted-foreground">Nothing to release</TableCell></TableRow>
               )}
             </TableBody>
           </Table>
