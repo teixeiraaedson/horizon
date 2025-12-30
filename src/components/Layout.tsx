@@ -6,9 +6,11 @@ import { AppHeader } from "@/components/AppHeader";
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <AppSidebarLayout>
-      <AppHeader />
-      <div className="p-4">
-        {children}
+      <div className="min-h-screen bg-background text-foreground">
+        <AppHeader />
+        <div className="p-4">
+          {children}
+        </div>
       </div>
     </AppSidebarLayout>
   );
