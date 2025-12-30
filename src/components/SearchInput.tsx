@@ -9,15 +9,20 @@ type Props = {
   placeholder?: string;
 };
 
-export const SearchInput = ({ value, onChange, placeholder = "Search transactions..." }: Props) => {
+export const SearchInput = ({
+  value,
+  onChange,
+  placeholder = "Search transactions...",
+}: Props) => {
   return (
     <div className="relative w-full max-w-sm">
-      <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+      <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
       <Input
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="pl-8 input-dark"
+        aria-label={placeholder}
+        className="pl-9 input-dark"
       />
     </div>
   );
