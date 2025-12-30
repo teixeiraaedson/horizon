@@ -226,6 +226,56 @@
     border: 1px solid rgba(148, 163, 184, 0.28);
   }
 
+  /* Sidebar shell and link styles for clear contrast */
+  .sidebar-root {
+    background-color: var(--hz-surface0);
+    color: var(--hz-text);
+    border-right: 1px solid var(--hz-border);
+  }
+
+  /* Base state: muted, readable */
+  .sidebar-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 10px;
+    color: var(--hz-muted) !important;
+    transition: color 120ms ease, background-color 120ms ease, border-color 120ms ease;
+  }
+  .sidebar-link svg {
+    color: inherit;
+  }
+
+  /* Hover: brighten + subtle tint */
+  .sidebar-link:hover {
+    color: var(--hz-text) !important;
+    background-color: rgba(148,163,184,0.08);
+  }
+
+  /* Focus-visible: accessible blue glow */
+  .sidebar-link:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(56,189,248,0.20);
+  }
+
+  /* Active: pill background + stronger border + left blue bar */
+  .sidebar-link-active {
+    color: var(--hz-text) !important;
+    background-color: var(--hz-surface1);
+    border: 1px solid var(--hz-border-strong);
+  }
+  .sidebar-link-active::before {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    border-radius: 2px;
+    background-color: var(--hz-blue);
+  }
+
   /* Inputs (dark surface + blue glow) */
   .input-dark {
     background-color: rgba(2, 6, 12, 0.35) !important;
