@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/app/auth/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import { StatusBadge } from "@/components/StatusBadge";
+import { DataTable } from "@/components/DataTable";
 
 export default function ReleaseQueue() {
   const mock = useMockStore();
@@ -46,34 +47,36 @@ export default function ReleaseQueue() {
 
   return (
     <Layout>
-      <Card className="surface-2 card-hover">
+      <Card className="surface-1 card-sheen card-hover">
         <CardHeader><CardTitle>Release Queue</CardTitle></CardHeader>
-        <CardContent className="overflow-x-auto">
-          <Table className="table-modern w-full">
-            <TableHeader>
-              <TableRow>
-                <TableHead>Tx</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {items.map((t) => (
-                <TableRow key={t.id}>
-                  <TableCell className="font-mono text-xs">{t.id}</TableCell>
-                  <TableCell><StatusBadge status={t.status} /></TableCell>
-                  <TableCell>${t.amount.toLocaleString()}</TableCell>
-                  <TableCell>
-                    <Button size="sm" className="mr-2" onClick={() => { setSelected(t); }}>Decide</Button>
-                  </TableCell>
+        <CardContent className="p-0">
+          <DataTable>
+            <Table className="w-full">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Tx</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))}
-              {!items.length && (
-                <TableRow><TableCell colSpan={4} className="text-muted-foreground">Nothing to release</TableCell></TableRow>
-              )}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {items.map((t) => (
+                  <TableRow key={t.id}>
+                    <TableCell className="font-mono text-xs">{t.id}</TableCell>
+                    <TableCell><StatusBadge status={t.status} /></TableCell>
+                    <TableCell>${t.amount.toLocaleString()}</TableCell>
+                    <TableCell>
+                      <Button size="sm" className="mr-2" onClick={() => { setSelected(t); }}>Decide</Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {!items.length && (
+                  <TableRow><TableCell colSpan={4} className="text-muted-foreground">Nothing to release</TableCell></TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </DataTable>
         </CardContent>
       </Card>
 

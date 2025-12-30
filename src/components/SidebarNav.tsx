@@ -42,14 +42,19 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
 
   return (
     <SidebarProvider>
-      <Sidebar collapsible="icon" className="bg-[var(--surface-1)] border-r border-[var(--border-soft)]">
-        <SidebarHeader className="flex items-center justify-between">
-          <SidebarGroupLabel className="font-semibold">Horizon</SidebarGroupLabel>
-          <SidebarTrigger />
+      <Sidebar collapsible="icon" className="bg-[var(--surface0)] border-r border-[var(--border)]">
+        <SidebarHeader className="px-2 pt-3 pb-2">
+          <div className="flex items-center justify-between">
+            <div>
+              <SidebarGroupLabel className="font-semibold leading-tight">Horizon</SidebarGroupLabel>
+              <div className="text-[11px] text-muted-foreground">Treasury Management Suite</div>
+            </div>
+            <SidebarTrigger />
+          </div>
         </SidebarHeader>
         <SidebarSeparator />
         <SidebarContent>
-          <SidebarGroup>
+          <SidebarGroup className="mt-1">
             <SidebarMenu>
               {items.map((it) => {
                 const active = location.pathname === it.to;
@@ -71,23 +76,28 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
             </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter className="border-t border-[var(--border-soft)]">
-          <div className="p-2 text-xs text-muted-foreground">
-            <div className="flex items-center justify-between">
-              <span>Signed in as</span>
-              <Badge variant="outline">{user?.role ?? "guest"}</Badge>
-            </div>
-            <div className="mt-2 flex items-center justify-between">
-              <span className="truncate">{user?.email ?? "guest"}</span>
-              <button className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground" onClick={() => signOut()}>
-                <LogOut className="h-4 w-4" />
-                <span>Sign out</span>
-              </button>
+        <SidebarFooter className="border-t border-[var(--border)]">
+          <div className="p-2">
+            <button className="w-full text-left text-[12px] px-3 py-2 rounded-md border border-[var(--border)] hover:border-[var(--borderHover)] card-sheen" style={{ color: "var(--orange)" }}>
+              • Sandbox Mode
+            </button>
+            <div className="mt-3 text-xs text-muted-foreground">
+              <div className="flex items-center justify-between">
+                <span>Signed in as</span>
+                <Badge variant="outline">{user?.role ?? "guest"}</Badge>
+              </div>
+              <div className="mt-2 flex items-center justify-between">
+                <span className="truncate">{user?.email ?? "guest"}</span>
+                <button className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground" onClick={() => signOut()}>
+                  <LogOut className="h-4 w-4" />
+                  <span>Sign out</span>
+                </button>
+              </div>
             </div>
           </div>
         </SidebarFooter>
       </Sidebar>
-      <SidebarInset className="bg-[var(--bg)]">{children}</SidebarInset>
+      <SidebarInset className="bg-transparent">{children}</SidebarInset>
     </SidebarProvider>
   );
 };

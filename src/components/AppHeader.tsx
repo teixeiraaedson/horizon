@@ -5,7 +5,7 @@ import { useSettings } from "@/app/settings/SettingsContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Bell, User } from "lucide-react";
+import { Bell } from "lucide-react";
 import logo from "@/assets/horizon-logo.png";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -13,9 +13,9 @@ import { SearchInput } from "@/components/SearchInput";
 import { useMockStore } from "@/mock/store";
 
 function pageMeta(pathname: string) {
+  const base = { title: "Horizon", subtitle: "Treasury Management Suite" };
+  if (pathname === "/" || pathname === "/dashboard") return { title: "Dashboard", subtitle: "Treasury operations overview and quick actions" };
   const map: Record<string, { title: string; subtitle: string }> = {
-    "/": { title: "Dashboard", subtitle: "Overview and recent activity" },
-    "/dashboard": { title: "Dashboard", subtitle: "Overview and recent activity" },
     "/fund": { title: "Fund", subtitle: "Add funds to a wallet" },
     "/send": { title: "Send", subtitle: "Move funds between wallets" },
     "/withdraw": { title: "Withdraw", subtitle: "Withdraw funds to bank" },
@@ -26,7 +26,7 @@ function pageMeta(pathname: string) {
     "/settings": { title: "Settings", subtitle: "Configuration and health" },
     "/auth": { title: "Sign in", subtitle: "Demo users" },
   };
-  return map[pathname] ?? { title: "Horizon", subtitle: "Treasury Management Suite" };
+  return map[pathname] ?? base;
 }
 
 export const AppHeader = () => {
@@ -47,7 +47,7 @@ export const AppHeader = () => {
 
   return (
     <div className="topbar sticky top-0 z-20">
-      <div className="px-4 py-2 flex items-center justify-between">
+      <div className="px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <img src={logo} className="h-7 w-auto" alt="Horizon Logo" />
           <div className="leading-tight">
@@ -61,12 +61,12 @@ export const AppHeader = () => {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <SearchInput value={q} onChange={setQ} />
+          <SearchInput value={q} onChange={setQ} placeholder="Search transactions..." />
           <Button variant="ghost" size="icon" aria-label="Notifications">
             <div className="relative">
               <Bell className="h-5 w-5" />
               {pendingCount > 0 && (
-                <span className="absolute -top-1 -right-1 inline-flex items-center justify-center h-4 w-4 text-[10px] rounded-full bg-[var(--orange)] text-black">
+                <span className="absolute -top-1 -right-1 inline-flex items-center justify-center h-4 w-4 text-[10px] rounded-full" style={{ backgroundColor: "var(--orange)", color: "#0b0f16" }}>
                   {pendingCount}
                 </span>
               )}
@@ -75,7 +75,7 @@ export const AppHeader = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                <div className="h-6 w-6 rounded-full bg-[rgba(148,163,184,0.22)] flex items-center justify-center text-xs">{initials}</div>
+                <div className="h-7 w-7 rounded-full" style={{ backgroundColor: "rgba(148,163,184,0.22)" }} />
                 <span className="hidden sm:inline">{user?.email ?? "Guest"}</span>
               </Button>
             </DropdownMenuTrigger>

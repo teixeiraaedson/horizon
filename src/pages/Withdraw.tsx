@@ -40,7 +40,7 @@ export default function Withdraw() {
 
   return (
     <Layout>
-      <Card className="surface-2 card-hover max-w-xl">
+      <Card className="surface-1 card-sheen card-hover max-w-xl">
         <CardHeader>
           <CardTitle>Withdraw</CardTitle>
         </CardHeader>
@@ -49,7 +49,7 @@ export default function Withdraw() {
             <div>
               <label className="block text-sm mb-1 text-muted-foreground">From Wallet</label>
               <Select onValueChange={(v) => form.setValue("walletId", v)} value={form.watch("walletId")}>
-                <SelectTrigger><SelectValue placeholder="Select wallet" /></SelectTrigger>
+                <SelectTrigger className="input-dark"><SelectValue placeholder="Select wallet" /></SelectTrigger>
                 <SelectContent>
                   {wallets.map((w) => (<SelectItem key={w.id} value={w.id}>{w.name}</SelectItem>))}
                 </SelectContent>
@@ -57,11 +57,11 @@ export default function Withdraw() {
             </div>
             <div>
               <label className="block text-sm mb-1 text-muted-foreground">Amount (USD)</label>
-              <Input className="bg-background/60 border-muted focus-visible:ring-2 focus-visible:ring-ring" type="number" step="1" {...form.register("amount", { valueAsNumber: true })} />
+              <Input className="input-dark" type="number" step="1" {...form.register("amount", { valueAsNumber: true })} />
             </div>
             <div>
               <label className="block text-sm mb-1 text-muted-foreground">Bank Reference</label>
-              <Input className="bg-background/60 border-muted focus-visible:ring-2 focus-visible:ring-ring" type="text" {...form.register("bankReference")} placeholder="Optional note" />
+              <Input className="input-dark" type="text" {...form.register("bankReference")} placeholder="Optional note" />
             </div>
             <Button type="submit" className="hover:shadow-[0_0_24px_rgba(56,189,248,0.10)]">Withdraw</Button>
           </form>
