@@ -41,11 +41,21 @@
     --input: 220 20% 20%;
     --ring: 199 90% 60%;
     --radius: 0.75rem; /* ~12px */
+
+    /* ENFORCE DARK COLOR SCHEME */
+    color-scheme: dark;
   }
 
+  /* ENFORCE DARK ROOT BACKGROUNDS */
   html, body {
+    min-height: 100%;
     background: linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%);
     color: var(--text);
+  }
+  body { margin: 0; }
+  #root {
+    min-height: 100vh;
+    background: linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%);
   }
 
   /* Surfaces and cards */

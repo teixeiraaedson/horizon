@@ -36,23 +36,23 @@ export default function Settings() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label className="text-muted-foreground">Approval Threshold (USD)</Label>
-                <Input type="number" value={settings.approvalThresholdUSD} onChange={(e) => setSettings({ approvalThresholdUSD: Number(e.target.value) })} className="bg-background/60 border-muted focus-visible:ring-2 focus-visible:ring-ring" />
+                <Input type="number" value={settings.approvalThresholdUSD} onChange={(e) => setSettings({ approvalThresholdUSD: Number(e.target.value) })} className="input-dark" />
               </div>
               <div>
                 <Label className="text-muted-foreground">Per-Transaction Limit (USD)</Label>
-                <Input type="number" value={settings.txLimitUSD} onChange={(e) => setSettings({ txLimitUSD: Number(e.target.value) })} className="bg-background/60 border-muted focus-visible:ring-2 focus-visible:ring-ring" />
+                <Input type="number" value={settings.txLimitUSD} onChange={(e) => setSettings({ txLimitUSD: Number(e.target.value) })} className="input-dark" />
               </div>
               <div>
                 <Label className="text-muted-foreground">Daily Limit (USD)</Label>
-                <Input type="number" value={settings.dailyLimitUSD} onChange={(e) => setSettings({ dailyLimitUSD: Number(e.target.value) })} className="bg-background/60 border-muted focus-visible:ring-2 focus-visible:ring-ring" />
+                <Input type="number" value={settings.dailyLimitUSD} onChange={(e) => setSettings({ dailyLimitUSD: Number(e.target.value) })} className="input-dark" />
               </div>
               <div>
                 <Label className="text-muted-foreground">Timelock Start (UTC)</Label>
-                <Input value={settings.timelockStart} onChange={(e) => setSettings({ timelockStart: e.target.value })} className="bg-background/60 border-muted focus-visible:ring-2 focus-visible:ring-ring" />
+                <Input value={settings.timelockStart} onChange={(e) => setSettings({ timelockStart: e.target.value })} className="input-dark" />
               </div>
               <div>
                 <Label className="text-muted-foreground">Timelock End (UTC)</Label>
-                <Input value={settings.timelockEnd} onChange={(e) => setSettings({ timelockEnd: e.target.value })} className="bg-background/60 border-muted focus-visible:ring-2 focus-visible:ring-ring" />
+                <Input value={settings.timelockEnd} onChange={(e) => setSettings({ timelockEnd: e.target.value })} className="input-dark" />
               </div>
             </div>
           </CardContent>
