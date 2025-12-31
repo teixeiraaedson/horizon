@@ -1,81 +1,64 @@
 # Welcome to your Dyad app
 
-## Auth Setup (Supabase Email Verification)
+## Email (Resend) setup on Vercel
 
-To enable real email verification with Supabase:
+To enable real email verification and password reset:
 
-1) Supabase Dashboard → Auth
-- Enable "Confirm email".
-- Configure SMTP with a real provider (Resend, SendGrid, etc.). Test sending to ensure delivery works.
-- Set Site URL to your production URL.
-- Add Redirect URLs:
-  - http://localhost:32110/**
-  - https://YOUR_PRODUCTION_DOMAIN/**
+1) Vercel Project → Settings → Environment Variables
+Add these variables to BOTH Preview and Production:
+- RESEND_API_KEY (Server)
+- RESEND_FROM_EMAIL (Server) e.g. Horizon <no-reply@YOURDOMAIN.com>
+- APP_BASE_URL (Server) e.g. https://your-vercel-app.vercel.app (for local dev you can set http://localhost:32110)
+- AUTH_TOKEN_SECRET (Server) a random 32+ character secret string
 
-2) Application URLs
-- The verification email should redirect to: /auth/callback
-- Ensure your provider templates include the confirmation link that Supabase generates.
+After adding, Redeploy the project for changes to take effect.
 
-3) Behavior
-- Sign up: the app calls `supabase.auth.signUp({ email, password })` and then navigates to /verify.
-- /verify page:
-  - "Resend verification email" calls `supabase.auth.resend({ type: "signup", email })`.
-  - "Refresh status" calls `supabase.auth.getUser()` and checks `email_confirmed_at`.
-  - "Sign out" calls `supabase.auth.signOut()`.
-- Callback: `/auth/callback` exchanges the code for a session via `supabase.auth.exchangeCodeForSession(window.location.href)` and redirects:
-  - Verified → /dashboard
-  - Not verified → /verify
+If your domain isn't verified with Resend yet:
+- You can use Resend's default testing sender (e.g., on @resend.dev) per their documentation.
+- In testing mode, emails may include disclaimers; once you verify your own domain, use your production sender.
 
-4) Route Guards
-- Not logged in → /auth
-- Logged in but NOT verified → /verify
-- Logged in and verified → app routes
+## API endpoints
 
-## Password Recovery (Supabase Auth)
+Serverless Functions under `/api`:
+- POST /api/auth/signup
+- POST /api/auth/login
+- GET  /api/auth/me
+- POST /api/auth/request-verify-email
+- GET  /api/auth/verify-email?token=...
+- POST /api/auth/request-password-reset
+- POST /api/auth/reset-password
+- POST /api/auth/logout
 
-Enable real password reset emails and configure redirects:
+Emails are sent via the `resend` package on the server. Tokens are signed with `AUTH_TOKEN_SECRET`, stored hashed in `public.auth_tokens`, and single-use.
 
-1) Supabase Dashboard → Auth → Email
-- Configure SMTP with a real provider (Resend, SendGrid, etc.).
-- Add Redirect URLs:
-  - http://localhost:32110/reset-password
-  - https://YOUR_PRODUCTION_DOMAIN/reset-password
+## Frontend behavior
 
-2) App behavior and methods
-- /forgot-password (file: `src/pages/ForgotPassword.tsx`)
-  - Calls: `supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + "/reset-password" })`.
-  - Shows: "Check your email for a password reset link."
-- /reset-password (file: `src/pages/ResetPassword.tsx`)
-  - On load: `supabase.auth.exchangeCodeForSession(window.location.href)`.
-    - If it fails, shows "Reset link invalid or expired" and lets user request a new link.
-  - Form validates strong password (min 12, 1 upper, 1 lower, 1 number, 1 special).
-  - Submit: `supabase.auth.updateUser({ password: newPassword })`.
-  - On success: shows success message and redirects to `/dashboard`.
+- /auth (login + sign up):
+  - Sign up → POST /api/auth/signup → success shows "Check your email..." with "Resend verification email".
+  - Login → POST /api/auth/login → if 403 EMAIL_NOT_VERIFIED: redirect to /verify and store email in localStorage["pendingEmail"].
+  - "Forgot password?" → request reset via POST /api/auth/request-password-reset.
 
-3) End-to-end test guide
-- Create account, sign out.
-- Visit `/forgot-password`, request reset for your email.
-- Receive Supabase email, click link → lands at `/reset-password`.
-- Set a strong new password; you'll be redirected to `/dashboard`.
-- Sign out, then log in with the new password via `/auth` (should succeed).
+- /auth/verify:
+  - Reads `?token=...`, calls GET /api/auth/verify-email, sets session, redirects to dashboard on success; otherwise shows error with "Go to Verify" and "Back to Login".
 
-4) No mocks
-- The reset flow uses only Supabase Auth methods.
-- Any simulated or dev-only reset UI has been removed.
+- /verify:
+  - Instruction page; "Resend verification email" → POST /api/auth/request-verify-email { email }
+  - "Back to login" → /auth
 
-## Verification Checklist
+- /auth/reset-password:
+  - Reads `?token=...`, enforces strong password rules, calls POST /api/auth/reset-password, redirects to /auth on success.
 
-1) Code Search Confirmation
-- No fake reset strings in the repo:
-  - "simulated reset", "dev reset", "mock reset" are not present.
+## Tests and CI
 
-2) Manual Test (Recovery)
-- Create account → logout → forgot password → receive real email → click link → set new password → logout → login with the new password.
+- Unit tests (Vitest) for token signing/verification, expiry, single-use behavior (logic), rate limiting, and password hashing.
+- Integration-style tests mock Resend client logic (no real emails).
+- CI runs `pnpm run test:coverage` and `pnpm run build`.
 
-3) Methods & Locations
-- `resetPasswordForEmail`: `src/pages/ForgotPassword.tsx`
-- `exchangeCodeForSession`: `src/pages/ResetPassword.tsx`
-- `updateUser({ password })`: `src/pages/ResetPassword.tsx`
+## Acceptance Checklist (Preview deployment)
 
-4) Strong Password Validation
-- Weak passwords fail client-side validation and the Reset button is disabled until rules are met.
+1) Set env vars in Vercel (Preview + Production) exactly as listed.
+2) Deploy (redeploy required after setting env vars).
+3) Sign up → receive verification email → click link → verified → access dashboard.
+4) Request password reset → receive email → reset password → login works.
+5) Confirm `RESEND_API_KEY` is NOT present in client bundle (search built output).
+6) Confirm endpoints return the same success message for unknown emails (no account enumeration).

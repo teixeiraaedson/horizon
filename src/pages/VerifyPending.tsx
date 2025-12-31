@@ -24,7 +24,7 @@ export default function VerifyPending() {
       setStatusMsg("Please enter your email to resend the verification message.");
       return;
     }
-    const res = await fetch("/api/auth/resend-verification", {
+    const res = await fetch("/api/auth/request-verify-email", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",

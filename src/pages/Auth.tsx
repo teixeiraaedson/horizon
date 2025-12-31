@@ -26,6 +26,9 @@ export default function Auth() {
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [resendMsg, setResendMsg] = useState<string | null>(null);
 
+  const [showResetRequest, setShowResetRequest] = useState(false);
+  const [resetMsg, setResetMsg] = useState<string | null>(null);
+
   const onSignUp = async () => {
     setError(null);
     setResendMsg(null);
@@ -64,7 +67,6 @@ export default function Auth() {
     });
     setLoading(false);
     if (!res.ok) {
-      // If EMAIL_NOT_VERIFIED, redirect to /verify and store pending email
       let code = "";
       try {
         const body = await res.json();
@@ -88,7 +90,7 @@ export default function Auth() {
       setResendMsg("Please enter your email to resend the verification message.");
       return;
     }
-    const res = await fetch("/api/auth/resend-verification", {
+    const res = await fetch("/api/auth/request-verify-email", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -100,6 +102,27 @@ export default function Auth() {
       return;
     }
     setResendMsg("Verification email sent. Please check your inbox.");
+  };
+
+  const requestPasswordReset = async () => {
+    setResetMsg(null);
+    const target = email.trim();
+    if (!target) {
+      setResetMsg("Enter your email to request a reset link.");
+      return;
+    }
+    const res = await fetch("/api/auth/request-password-reset", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ email: target }),
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      setResetMsg(body?.error?.message || "If an account exists, a reset email has been sent.");
+      return;
+    }
+    setResetMsg("If an account exists, a reset email has been sent.");
   };
 
   const submitDisabled =
@@ -177,8 +200,21 @@ export default function Auth() {
             )}
 
             <div className="text-xs">
-              <a href="/auth/reset-password" className="underline">Forgot password?</a>
+              <button className="underline" onClick={() => setShowResetRequest((s) => !s)}>Forgot password?</button>
             </div>
+
+            {showResetRequest && (
+              <div className="space-y-2">
+                <div className="text-xs text-muted-foreground">
+                  Enter your email and we'll send a password reset link.
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={requestPasswordReset}>Send reset link</Button>
+                  <Button onClick={() => window.location.replace("/auth/reset-password")}>I have a token</Button>
+                </div>
+                {resetMsg && <div className="text-xs text-muted-foreground">{resetMsg}</div>}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
