@@ -16,32 +16,45 @@ import {
   SidebarTrigger,
   SidebarHeader,
   SidebarSeparator,
+  useSidebar,
 } from "@/components/ui/sidebar";
-import { LogOut, PanelLeft } from "lucide-react";
+import { LogOut, PanelLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/app/auth/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { navSections } from "@/components/sidebar/nav";
 
-const CollapseToggle = () => {
-  const { state, toggleSidebar } = require("@/components/ui/sidebar").useSidebar();
+type CollapseToggleProps = {
+  collapsed: boolean;
+  onToggle: () => void;
+};
+
+function CollapseToggle({ collapsed, onToggle }: CollapseToggleProps) {
   return (
     <button
-      onClick={() => {
-        const collapsedNext = state === "expanded";
-        try {
-          localStorage.setItem("sidebarCollapsed", collapsedNext ? "true" : "false");
-        } catch {}
-        toggleSidebar();
-      }}
-      className="w-full text-left text-[12px] px-3 py-2 rounded-lg border border-[color:var(--hz-border)] bg-[rgba(148,163,184,0.08)] hover:border-[color:var(--hz-border-strong)] card-sheen inline-flex items-center gap-2"
+      type="button"
+      onClick={onToggle}
+      className="mt-auto flex w-full items-center justify-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground hover:bg-accent/10"
+      aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
     >
-      <PanelLeft className="h-4 w-4" />
-      <span>Collapse</span>
+      {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+      <span className={collapsed ? "sr-only" : ""}>Collapse</span>
     </button>
   );
-};
+}
+
+function SidebarFooterControls() {
+  const { state, toggleSidebar } = useSidebar();
+  const collapsed = state === "collapsed";
+  const onToggle = () => {
+    try {
+      localStorage.setItem("sidebarCollapsed", collapsed ? "false" : "true");
+    } catch {}
+    toggleSidebar();
+  };
+  return <CollapseToggle collapsed={collapsed} onToggle={onToggle} />;
+}
 
 export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
@@ -102,7 +115,7 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
         </SidebarContent>
         <SidebarFooter className="border-t border-[color:var(--hz-border)]">
           <div className="p-2 space-y-2">
-            <CollapseToggle />
+            <SidebarFooterControls />
             <div className="mt-1 text-xs text-[color:var(--hz-muted)] space-y-2">
               <div className="flex items-center justify-between">
                 <span>Signed in as</span>
