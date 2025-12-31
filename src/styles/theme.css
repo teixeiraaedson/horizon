@@ -89,6 +89,19 @@
     --hz-orange: #F59E0B;
   }
 
+  /* Global safety */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  /* Grid container and children rules to avoid overflow */
+  .app-shell {
+    overflow-x: hidden;
+  }
+  .app-shell > * {
+    min-width: 0;
+  }
+
   /* Root backgrounds */
   html,
   body {

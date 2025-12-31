@@ -44,13 +44,7 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
 
   return (
     <SidebarProvider>
-      <Sidebar
-        collapsible="icon"
-        className={cn(
-          "sidebar-root",
-          "bg-[color:var(--hz-surface0)] text-[color:var(--hz-text)] border-r border-[color:var(--hz-border)]"
-        )}
-      >
+      <Sidebar collapsible="icon" className="bg-[var(--hz-surface0)] text-[var(--hz-text)] border-r border-[var(--hz-border)] h-[100vh] overflow-y-auto min-w-0 p-2">
         <SidebarHeader className="px-2 pt-3 pb-2">
           <div className="flex items-center justify-between">
             <div>
@@ -113,7 +107,9 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
           </div>
         </SidebarFooter>
       </Sidebar>
-      <SidebarInset className="bg-transparent">{children}</SidebarInset>
+      <SidebarInset className="bg-background">
+        {children}
+      </SidebarInset>
     </SidebarProvider>
   );
 };

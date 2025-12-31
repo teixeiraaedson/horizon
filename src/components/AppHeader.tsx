@@ -46,7 +46,7 @@ export const AppHeader = () => {
   const initials = (user?.email || "U").slice(0, 2).toUpperCase();
 
   return (
-    <div className="topbar sticky top-0 z-20">
+    <div className="topbar">
       <div className="px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <img src={logo} className="h-7 w-auto" alt="Horizon Logo" />
