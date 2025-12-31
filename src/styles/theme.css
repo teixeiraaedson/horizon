@@ -89,16 +89,13 @@
     --hz-orange: #F59E0B;
   }
 
-  /* Global safety */
+  /* Safety: consistent box model */
   *, *::before, *::after {
     box-sizing: border-box;
   }
 
-  /* Grid container and children rules to avoid overflow */
-  .app-shell {
-    overflow-x: hidden;
-  }
-  .app-shell > * {
+  /* Prevent grid children from causing horizontal overflow */
+  .group\/sidebar-wrapper > * {
     min-width: 0;
   }
 
