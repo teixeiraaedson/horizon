@@ -99,9 +99,3 @@
     color: hsl(var(--foreground));
   }
 }
-
-/* Temporary safety probe to kill any light leaks until verified */
-html, body, #root {
-  background: #070B14 !important;
-  color: rgba(248,250,252,0.92) !important;
-}

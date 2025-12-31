@@ -14,22 +14,24 @@ type Props = {
 };
 
 export const ActionCard = ({ title, description, icon, accent = "blue", ctaLabel, onClick }: Props) => {
-  const accentRing: Record<NonNullable<Props["accent"]>, string> = {
-    blue: "ring-[rgba(56,189,248,0.30)]",
-    green: "ring-[rgba(34,197,94,0.30)]",
-    orange: "ring-[rgba(245,158,11,0.30)]",
+  const chipStyles: Record<NonNullable<Props["accent"]>, React.CSSProperties> = {
+    blue:   { backgroundColor: "rgba(56,189,248,0.12)", border: "1px solid rgba(56,189,248,0.25)" },
+    green:  { backgroundColor: "rgba(34,197,94,0.12)",  border: "1px solid rgba(34,197,94,0.25)" },
+    orange: { backgroundColor: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.28)" },
   };
+
   const accentGlow: Record<NonNullable<Props["accent"]>, string> = {
     blue: "glow-blue",
     green: "glow-green",
     orange: "glow-orange",
   };
+
   return (
     <Card className={`surface-2 card-sheen card-hover w-full h-[90px] ${accentGlow[accent]}`}>
       <CardHeader className="px-4 pt-4 pb-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className={`h-10 w-10 rounded-lg bg-[rgba(148,163,184,0.12)] ring-1 ${accentRing[accent]} flex items-center justify-center`}>
+            <div className="h-10 w-10 rounded-lg flex items-center justify-center" style={chipStyles[accent]}>
               {icon}
             </div>
             <div className="min-w-0">
