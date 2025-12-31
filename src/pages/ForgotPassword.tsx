@@ -2,25 +2,34 @@
 
 import React, { useState } from "react";
 import { Layout } from "@/components/Layout";
-import { useAuth } from "@/app/auth/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function ForgotPassword() {
-  const { forgotPassword } = useAuth();
   const [email, setEmail] = useState("");
-  const [token, setToken] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
 
-  const submit = () => {
-    const res = forgotPassword(email.trim());
-    if (res.ok) {
-      setToken(res.token || null);
-      setMsg("Check your email for a reset link (simulated).");
-    } else {
-      setMsg("Email not found.");
+  const submit = async () => {
+    setMsg(null);
+    setError(null);
+    const target = email.trim();
+    if (!target) {
+      setError("Please enter your email.");
+      return;
     }
+    setSending(true);
+    const redirectTo = `${window.location.origin}/reset-password`;
+    const res = await supabase.auth.resetPasswordForEmail(target, { redirectTo });
+    setSending(false);
+    if (res.error) {
+      setError(res.error.message || "Failed to send reset email.");
+      return;
+    }
+    setMsg("Check your email for a password reset link.");
   };
 
   return (
@@ -30,14 +39,9 @@ export default function ForgotPassword() {
           <CardHeader><CardTitle>Forgot password</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <Input placeholder="email@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <Button onClick={submit}>Send reset link</Button>
+            <Button onClick={submit} disabled={sending}>Send reset link</Button>
             {msg && <div className="text-sm text-muted-foreground">{msg}</div>}
-            {token && (
-              <div className="text-xs">
-                Dev-only: reset link
-                <a href={`/reset-password?token=${token}`} className="ml-1 underline">Open reset page</a>
-              </div>
-            )}
+            {error && <div className="text-sm text-red-500">{error}</div>}
           </CardContent>
         </Card>
       </div>
