@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
@@ -18,6 +18,15 @@ import Auth from "./pages/Auth";
 import { SettingsProvider } from "./app/settings/SettingsContext";
 import { AuthProvider } from "./app/auth/AuthContext";
 
+// New pages
+import Mint from "./pages/Mint";
+import Transfer from "./pages/Transfer";
+import Redeem from "./pages/Redeem";
+import PolicyRules from "./pages/PolicyRules";
+import ActivityLog from "./pages/ActivityLog";
+import Users from "./pages/Users";
+import AdminSettings from "./pages/AdminSettings";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -31,16 +40,30 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/fund" element={<Fund />} />
-              <Route path="/send" element={<Send />} />
-              <Route path="/withdraw" element={<Withdraw />} />
-              <Route path="/release-queue" element={<ReleaseQueue />} />
+
+              {/* New Lovable-style routes */}
+              <Route path="/mint" element={<Mint />} />
+              <Route path="/transfer" element={<Transfer />} />
+              <Route path="/redeem" element={<Redeem />} />
+              <Route path="/policy-rules" element={<PolicyRules />} />
+              <Route path="/activity-log" element={<ActivityLog />} />
+              <Route path="/users" element={<Users />} />
+              <Route path="/admin-settings" element={<AdminSettings />} />
+
+              {/* Legacy routes still exist; add redirects to new pages */}
+              <Route path="/fund" element={<Navigate to="/mint" replace />} />
+              <Route path="/send" element={<Navigate to="/transfer" replace />} />
+              <Route path="/withdraw" element={<Navigate to="/redeem" replace />} />
+              <Route path="/audit-trail" element={<Navigate to="/activity-log" replace />} />
+              <Route path="/release-queue" element={<Navigate to="/policy-rules" replace />} />
+
+              {/* Existing pages remain available */}
               <Route path="/audit" element={<AuditTrail />} />
               <Route path="/webhooks" element={<Webhooks />} />
               <Route path="/wallets" element={<Wallets />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/auth" element={<Auth />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              {/* Catch-all */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
