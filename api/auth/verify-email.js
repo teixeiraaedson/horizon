@@ -1,29 +1,24 @@
-import { sendJson, sendError, requireEnv, supabaseServer, hashToken, verifyToken, setSessionCookie, randomSessionToken } from "../_lib";
+const { sendJson, sendError, requireEnv, supabaseServer, hashToken, verifyToken, setSessionCookie, randomSessionToken } = require("../_lib");
 
-export default async function handler(req: any, res: any) {
+module.exports = async function handler(req, res) {
   const envCheck = requireEnv(["AUTH_TOKEN_SECRET", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"]);
-  if (!("ok" in envCheck) || envCheck.ok === false) {
+  if (!envCheck.ok) {
     return sendError(res, 500, { code: "ENV_MISSING", message: "Missing env vars", details: envCheck.missing });
   }
-
   if (req.method !== "GET") return sendError(res, 405, { code: "METHOD_NOT_ALLOWED", message: "Method not allowed" });
 
-  const token =
-    (req.query?.token as string) ||
-    ((() => {
-      try {
-        const u = new URL(req.url || "", "http://localhost");
-        return u.searchParams.get("token") || "";
-      } catch {
-        return "";
-      }
-    })());
-
+  let token = (req.query && req.query.token) || "";
+  if (!token) {
+    try {
+      const u = new URL(req.url || "", "http://localhost");
+      token = u.searchParams.get("token") || "";
+    } catch {}
+  }
   if (!token) return sendError(res, 400, { code: "BAD_REQUEST", message: "Missing token" });
 
   let payload;
   try {
-    payload = await verifyToken(token, process.env.AUTH_TOKEN_SECRET as string);
+    payload = await verifyToken(token, process.env.AUTH_TOKEN_SECRET);
   } catch {
     return sendError(res, 400, { code: "INVALID_TOKEN", message: "Invalid or expired token." });
   }
@@ -39,7 +34,6 @@ export default async function handler(req: any, res: any) {
     .eq("token_hash", tokenHash)
     .eq("type", "verify_email")
     .maybeSingle();
-
   if (!tok || tok.used_at || new Date(tok.expires_at) < new Date()) {
     return sendError(res, 400, { code: "INVALID_TOKEN", message: "Invalid or expired token." });
   }
@@ -54,4 +48,4 @@ export default async function handler(req: any, res: any) {
   setSessionCookie(res, rawSession, 7 * 24 * 60 * 60);
 
   return sendJson(res, 200, { ok: true });
-}
+};

@@ -1,6 +1,6 @@
-import { readJson, sendJson, sendError, requireEnv, supabaseServer, signToken, hashToken, rateLimit, sendResetEmail } from "../_lib";
+const { readJson, sendJson, sendError, requireEnv, supabaseServer, signToken, hashToken, rateLimit, sendResetEmail } = require("../_lib");
 
-export default async function handler(req: any, res: any) {
+module.exports = async function handler(req, res) {
   const envCheck = requireEnv([
     "RESEND_API_KEY",
     "RESEND_FROM_EMAIL",
@@ -9,10 +9,9 @@ export default async function handler(req: any, res: any) {
     "SUPABASE_URL",
     "SUPABASE_SERVICE_ROLE_KEY",
   ]);
-  if (!("ok" in envCheck) || envCheck.ok === false) {
+  if (!envCheck.ok) {
     return sendError(res, 500, { code: "ENV_MISSING", message: "Missing env vars", details: envCheck.missing });
   }
-
   if (req.method !== "POST") return sendError(res, 405, { code: "METHOD_NOT_ALLOWED", message: "Method not allowed" });
 
   const body = await readJson(req);
@@ -29,7 +28,7 @@ export default async function handler(req: any, res: any) {
 
   const now = Math.floor(Date.now() / 1000);
   const exp = now + 30 * 60;
-  const token = await signToken({ userId: String(user.id), email, purpose: "reset", iat: now, exp }, process.env.AUTH_TOKEN_SECRET as string);
+  const token = await signToken({ userId: String(user.id), email, purpose: "reset", iat: now, exp }, process.env.AUTH_TOKEN_SECRET);
   const tokenHash = hashToken(token);
 
   await supabase.from("auth_tokens").insert({
@@ -46,4 +45,4 @@ export default async function handler(req: any, res: any) {
   }
 
   return sendJson(res, 200, { ok: true });
-}
+};

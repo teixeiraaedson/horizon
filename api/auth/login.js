@@ -1,17 +1,15 @@
-import { readJson, sendJson, sendError, requireEnv, supabaseServer, comparePassword, hashToken, setSessionCookie, randomSessionToken } from "../_lib";
+const { readJson, sendJson, sendError, requireEnv, supabaseServer, comparePassword, hashToken, setSessionCookie, randomSessionToken } = require("../_lib");
 
-export default async function handler(req: any, res: any) {
+module.exports = async function handler(req, res) {
   const envCheck = requireEnv(["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"]);
-  if (!("ok" in envCheck) || envCheck.ok === false) {
+  if (!envCheck.ok) {
     return sendError(res, 500, { code: "ENV_MISSING", message: "Missing env vars", details: envCheck.missing });
   }
-
   if (req.method !== "POST") return sendError(res, 405, { code: "METHOD_NOT_ALLOWED", message: "Method not allowed" });
 
   const body = await readJson(req);
   const email = String(body?.email || "").trim();
   const password = String(body?.password || "");
-
   if (!email || !password) return sendError(res, 400, { code: "BAD_REQUEST", message: "Email and password are required" });
 
   const supabase = supabaseServer();
@@ -36,4 +34,4 @@ export default async function handler(req: any, res: any) {
   setSessionCookie(res, rawSession, 7 * 24 * 60 * 60);
 
   return sendJson(res, 200, { ok: true });
-}
+};

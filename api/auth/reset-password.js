@@ -1,11 +1,10 @@
-import { readJson, sendJson, sendError, requireEnv, supabaseServer, verifyToken, hashToken, meetsRules, hashPassword } from "../_lib";
+const { readJson, sendJson, sendError, requireEnv, supabaseServer, verifyToken, hashToken, meetsRules, hashPassword } = require("../_lib");
 
-export default async function handler(req: any, res: any) {
+module.exports = async function handler(req, res) {
   const envCheck = requireEnv(["AUTH_TOKEN_SECRET", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"]);
-  if (!("ok" in envCheck) || envCheck.ok === false) {
+  if (!envCheck.ok) {
     return sendError(res, 500, { code: "ENV_MISSING", message: "Missing env vars", details: envCheck.missing });
   }
-
   if (req.method !== "POST") return sendError(res, 405, { code: "METHOD_NOT_ALLOWED", message: "Method not allowed" });
 
   const body = await readJson(req);
@@ -16,7 +15,7 @@ export default async function handler(req: any, res: any) {
 
   let payload;
   try {
-    payload = await verifyToken(token, process.env.AUTH_TOKEN_SECRET as string);
+    payload = await verifyToken(token, process.env.AUTH_TOKEN_SECRET);
   } catch {
     return sendError(res, 400, { code: "INVALID_TOKEN", message: "Invalid or expired token." });
   }
@@ -32,7 +31,6 @@ export default async function handler(req: any, res: any) {
     .eq("token_hash", tokenHash)
     .eq("type", "reset_password")
     .maybeSingle();
-
   if (!tok || tok.used_at || new Date(tok.expires_at) < new Date()) {
     return sendError(res, 400, { code: "INVALID_TOKEN", message: "Invalid or expired token." });
   }
@@ -43,4 +41,4 @@ export default async function handler(req: any, res: any) {
   await supabase.from("sessions").update({ revoked_at: new Date().toISOString() }).eq("user_id", tok.user_id);
 
   return sendJson(res, 200, { ok: true });
-}
+};

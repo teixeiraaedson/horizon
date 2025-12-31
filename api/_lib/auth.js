@@ -1,51 +1,41 @@
-import { createHash, randomBytes } from "crypto";
-import { SignJWT, jwtVerify } from "jose";
-import bcrypt from "bcryptjs";
-import { Resend } from "resend";
-import { createClient } from "@supabase/supabase-js";
+const { createHash, randomBytes } = require("crypto");
+const { SignJWT, jwtVerify } = require("jose");
+const bcrypt = require("bcryptjs");
+const { Resend } = require("resend");
+const { createClient } = require("@supabase/supabase-js");
 
-export type TokenPurpose = "verify" | "reset";
-
-export type AuthTokenPayload = {
-  userId: string;
-  email: string;
-  purpose: TokenPurpose;
-  iat: number; // seconds
-  exp: number; // seconds
-};
-
-export function supabaseServer() {
-  const url = process.env.SUPABASE_URL as string;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY as string;
+function supabaseServer() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   return createClient(url, key, { auth: { persistSession: false } });
 }
 
-export function hashToken(raw: string): string {
+function hashToken(raw) {
   return createHash("sha256").update(raw).digest("hex");
 }
 
-export function randomSessionToken(): string {
+function randomSessionToken() {
   return randomBytes(32).toString("hex");
 }
 
-export function setSessionCookie(res: any, rawToken: string, maxAgeSeconds: number) {
+function setSessionCookie(res, rawToken, maxAgeSeconds) {
   const expires = new Date(Date.now() + maxAgeSeconds * 1000).toUTCString();
   const cookie = `session_token=${rawToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAgeSeconds}; Expires=${expires}; Secure`;
   res.setHeader("Set-Cookie", cookie);
 }
 
-export function clearSessionCookie(res: any) {
+function clearSessionCookie(res) {
   const cookie = `session_token=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure`;
   res.setHeader("Set-Cookie", cookie);
 }
 
-export function getSessionTokenFromReq(req: any): string | null {
-  const raw = req.headers?.cookie || "";
+function getSessionTokenFromReq(req) {
+  const raw = (req.headers && req.headers.cookie) || "";
   const match = raw.match(/(?:^|;\s*)session_token=([^;]+)/);
   return match ? decodeURIComponent(match[1]) : null;
 }
 
-export async function signToken(payload: AuthTokenPayload, secret: string): Promise<string> {
+async function signToken(payload, secret) {
   const key = new TextEncoder().encode(secret);
   return await new SignJWT({ userId: payload.userId, email: payload.email, purpose: payload.purpose })
     .setIssuedAt(payload.iat)
@@ -54,7 +44,7 @@ export async function signToken(payload: AuthTokenPayload, secret: string): Prom
     .sign(key);
 }
 
-export async function verifyToken(token: string, secret: string): Promise<AuthTokenPayload> {
+async function verifyToken(token, secret) {
   const key = new TextEncoder().encode(secret);
   const { payload } = await jwtVerify(token, key);
   const iat = typeof payload.iat === "number" ? payload.iat : Math.floor(Date.now() / 1000);
@@ -62,13 +52,13 @@ export async function verifyToken(token: string, secret: string): Promise<AuthTo
   return {
     userId: String(payload.userId),
     email: String(payload.email),
-    purpose: payload.purpose as TokenPurpose,
+    purpose: payload.purpose,
     iat,
     exp,
   };
 }
 
-export function meetsRules(pw: string): boolean {
+function meetsRules(pw) {
   const minLen = pw.length >= 12;
   const upper = /[A-Z]/.test(pw);
   const lower = /[a-z]/.test(pw);
@@ -77,19 +67,19 @@ export function meetsRules(pw: string): boolean {
   return minLen && upper && lower && num && special;
 }
 
-export async function hashPassword(pw: string): Promise<string> {
+async function hashPassword(pw) {
   const salt = await bcrypt.genSalt(10);
   return await bcrypt.hash(pw, salt);
 }
 
-export async function comparePassword(pw: string, hash: string): Promise<boolean> {
+async function comparePassword(pw, hash) {
   return await bcrypt.compare(pw, hash);
 }
 
-export async function sendVerificationEmail(to: string, token: string) {
-  const apiKey = process.env.RESEND_API_KEY as string;
-  const from = process.env.RESEND_FROM_EMAIL as string;
-  const base = process.env.APP_BASE_URL as string;
+async function sendVerificationEmail(to, token) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM_EMAIL;
+  const base = process.env.APP_BASE_URL;
   const resend = new Resend(apiKey);
   const verifyUrl = `${base}/auth/verify?token=${encodeURIComponent(token)}`;
   await resend.emails.send({
@@ -107,10 +97,10 @@ export async function sendVerificationEmail(to: string, token: string) {
   });
 }
 
-export async function sendResetEmail(to: string, token: string) {
-  const apiKey = process.env.RESEND_API_KEY as string;
-  const from = process.env.RESEND_FROM_EMAIL as string;
-  const base = process.env.APP_BASE_URL as string;
+async function sendResetEmail(to, token) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM_EMAIL;
+  const base = process.env.APP_BASE_URL;
   const resend = new Resend(apiKey);
   const resetUrl = `${base}/auth/reset-password?token=${encodeURIComponent(token)}`;
   await resend.emails.send({
@@ -128,12 +118,29 @@ export async function sendResetEmail(to: string, token: string) {
   });
 }
 
-// Simple in-memory rate limiter (best-effort per-IP/email)
-const rl = new Map<string, number>();
-export function rateLimit(key: string, cooldownMs = 60_000): boolean {
+// Simple in-memory rate limiter (best-effort per-key)
+const rl = new Map();
+function rateLimit(key, cooldownMs = 60_000) {
   const now = Date.now();
   const last = rl.get(key) || 0;
   if (now - last < cooldownMs) return false;
   rl.set(key, now);
   return true;
 }
+
+module.exports = {
+  supabaseServer,
+  hashToken,
+  randomSessionToken,
+  setSessionCookie,
+  clearSessionCookie,
+  getSessionTokenFromReq,
+  signToken,
+  verifyToken,
+  meetsRules,
+  hashPassword,
+  comparePassword,
+  sendVerificationEmail,
+  sendResetEmail,
+  rateLimit,
+};
