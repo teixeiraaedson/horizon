@@ -24,9 +24,8 @@ function now(): string {
   return new Date().toISOString();
 }
 
-// NOTE: this is a mock hash for idempotency, not cryptographic grade
+// NOTE: mock hash marker for idempotency (non-cryptographic)
 function hashPayload(raw: string): string {
-  // simple sha256-like marker (mock)
   // @ts-ignore - subtle exists in browsers
   return (window as any).crypto?.subtle
     ? "sha256-" + btoa(unescape(encodeURIComponent(raw))).slice(0, 44)
@@ -145,7 +144,13 @@ function updateBalancesForCompletion(db: LocalDB, t: Transaction) {
 /**
  * Seeding helpers
  */
-function seedIfNeeded(db: LocalDB, userId: UUID, whitelistEnabled: boolean, whitelistedWalletIds: UUID[], snapshot: Transaction["policySnapshot"]) {
+function seedIfNeeded(
+  db: LocalDB,
+  userId: UUID,
+  whitelistEnabled: boolean,
+  whitelistedWalletIds: UUID[],
+  snapshot: Transaction["policySnapshot"],
+) {
   if (db.initialized) return;
 
   const wOper: Wallet = { id: rid(), ownerId: userId, name: "Operating", type: "user", createdAt: now() };
@@ -328,7 +333,7 @@ export function useMockStore() {
   function createFund(input: { walletId: UUID; amount: number }): SuccessEnvelope<{ id: UUID; status: TransactionStatus; reasonCodes: string[]; policyDecision: string; explain: string; }> | ErrorEnvelope {
     seed();
     if (!user) return error("UNAUTHORIZED", "Not signed in");
-    if (user.role === "readonly") return error("FORBIDDEN", "ReadOnly demo cannot perform actions");
+    if ((user as any).role === "readonly") return error("FORBIDDEN", "ReadOnly demo cannot perform actions");
 
     const policyRes = policy.evaluateFundOrWithdraw("FUND", input.walletId, input.amount);
     if (policyRes.decision === "BLOCK") {
@@ -364,8 +369,8 @@ export function useMockStore() {
     };
     db.transactions.push(t);
 
-    auditTxCreated(db, t, "FUND", input.amount, user.email);
-    auditPolicyEvaluated(db, t, policyRes.decision, policyRes.explain, user.email);
+    auditTxCreated(db, t, "FUND", input.amount, (user as any).email || null);
+    auditPolicyEvaluated(db, t, policyRes.decision, policyRes.explain, (user as any).email || null);
 
     if (!requires) {
       policy.commitDaily(input.walletId, input.amount);
@@ -384,7 +389,7 @@ export function useMockStore() {
   function createSend(input: { fromWalletId: UUID; toWalletId: UUID; amount: number }): SuccessEnvelope<{ id: UUID; status: TransactionStatus; reasonCodes: string[]; policyDecision: string; explain: string; }> | ErrorEnvelope {
     seed();
     if (!user) return error("UNAUTHORIZED", "Not signed in");
-    if (user.role === "readonly") return error("FORBIDDEN", "ReadOnly demo cannot perform actions");
+    if ((user as any).role === "readonly") return error("FORBIDDEN", "ReadOnly demo cannot perform actions");
 
     const policyRes = policy.evaluateSend({
       actorId: user.id,
@@ -426,8 +431,8 @@ export function useMockStore() {
     };
     db.transactions.push(t);
 
-    auditTxCreated(db, t, "SEND", input.amount, user.email);
-    auditPolicyEvaluated(db, t, policyRes.decision, policyRes.explain, user.email);
+    auditTxCreated(db, t, "SEND", input.amount, (user as any).email || null);
+    auditPolicyEvaluated(db, t, policyRes.decision, policyRes.explain, (user as any).email || null);
 
     if (!requires) {
       policy.commitDaily(input.fromWalletId, input.amount);
@@ -446,7 +451,7 @@ export function useMockStore() {
   function createWithdraw(input: { walletId: UUID; amount: number; bankReference?: string }): SuccessEnvelope<{ id: UUID; status: TransactionStatus; reasonCodes: string[]; policyDecision: string; explain: string; }> | ErrorEnvelope {
     seed();
     if (!user) return error("UNAUTHORIZED", "Not signed in");
-    if (user.role === "readonly") return error("FORBIDDEN", "ReadOnly demo cannot perform actions");
+    if ((user as any).role === "readonly") return error("FORBIDDEN", "ReadOnly demo cannot perform actions");
 
     const policyRes = policy.evaluateFundOrWithdraw("WITHDRAW", input.walletId, input.amount);
     if (policyRes.decision === "BLOCK") {
@@ -482,8 +487,8 @@ export function useMockStore() {
     };
     db.transactions.push(t);
 
-    auditTxCreated(db, t, "WITHDRAW", input.amount, user.email);
-    auditPolicyEvaluated(db, t, policyRes.decision, policyRes.explain, user.email);
+    auditTxCreated(db, t, "WITHDRAW", input.amount, (user as any).email || null);
+    auditPolicyEvaluated(db, t, policyRes.decision, policyRes.explain, (user as any).email || null);
 
     if (!requires) {
       policy.commitDaily(input.walletId, input.amount);
