@@ -121,7 +121,7 @@
     background: transparent;
   }
 
-  /* Ultra-thin scrollbar for sidebar only */
+  /* Ultra-thin scrollbar for the sidebar only */
   .thin-scrollbar {
     scrollbar-width: thin; /* Firefox */
   }

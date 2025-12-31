@@ -78,7 +78,11 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
 
   return (
     <SidebarProvider>
-      <Sidebar collapsible="icon" className="bg-[var(--hz-surface0)] text-[var(--hz-text)] h-[100vh] overflow-y-auto min-w-0 p-2 border-none shadow-none thin-scrollbar" style={{ borderRight: 0 }}>
+      <Sidebar
+        collapsible="icon"
+        className="bg-[var(--hz-surface0)] text-[var(--hz-text)] h-[100vh] overflow-y-auto min-w-0 p-2 thin-scrollbar"
+        style={{ borderRightWidth: "1px", borderRightStyle: "solid", borderRightColor: "rgba(148,163,184,0.08)" }}
+      >
         <SidebarHeader className="px-2 pt-3 pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -99,7 +103,7 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
           {navSections.map((section, idx) => (
             <React.Fragment key={section.id}>
               <SidebarGroup className={cn("mt-1")}>
-                <SidebarGroupLabel className="mt-4 mb-2 text-[11px] uppercase tracking-wide font-medium text-slate-400/70">
+                <SidebarGroupLabel className="mt-4 mb-2 text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
                   {section.label}
                 </SidebarGroupLabel>
                 <SidebarMenu>
