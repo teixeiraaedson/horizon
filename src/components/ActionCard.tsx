@@ -32,7 +32,7 @@ export const ActionCard = ({ title, description, icon, accent = "blue", ctaLabel
       className="block h-full w-full rounded-2xl cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/40"
       aria-label={ctaLabel}
     >
-      <Card className={`surface-2 card-sheen w-full h-[90px] transition-colors hover:border-[color:var(--hz-border-strong)] ${accentGlow[accent]}`}>
+      <Card className={`surface-2 card-sheen w-full h-[90px] transition-colors hover:border-[color:var(--hz-border-strong)] hover:bg-[rgba(148,163,184,0.06)] ${accentGlow[accent]}`}>
         <CardHeader className="px-4 pt-4 pb-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
