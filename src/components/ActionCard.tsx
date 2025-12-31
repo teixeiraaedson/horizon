@@ -21,15 +21,15 @@ export const ActionCard = ({ title, description, icon, accent = "blue", ctaLabel
   };
   return (
     <Card className="surface-2 card-hover w-full h-[92px]">
-      <CardHeader className="pb-0">
+      <CardHeader className="px-4 pt-4 pb-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className={`h-10 w-10 rounded-lg bg-[rgba(148,163,184,0.12)] ring-1 ${accentRing[accent]} flex items-center justify-center`}>
               {icon}
             </div>
-            <div>
-              <CardTitle className="text-base">{title}</CardTitle>
-              {description && <div className="text-xs text-muted-foreground mt-0.5">{description}</div>}
+            <div className="min-w-0">
+              <CardTitle className="text-base truncate">{title}</CardTitle>
+              {description && <div className="text-xs text-muted-foreground mt-0.5 truncate">{description}</div>}
             </div>
           </div>
           <Button onClick={onClick} variant="ghost" className="hover:bg-[rgba(148,163,184,0.08)]">
