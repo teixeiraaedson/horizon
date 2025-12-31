@@ -9,7 +9,6 @@ import { useState, useEffect } from "react";
 import { SearchInput } from "@/components/SearchInput";
 import { useMockStore } from "@/mock/store";
 import { pageMeta } from "@/lib/pageMeta";
-import logo from "@/assets/horizon-logo.png";
 
 export const AppHeader = () => {
   const { user, signOut } = useAuth();
@@ -27,13 +26,12 @@ export const AppHeader = () => {
   const initials = (user?.email || "U").slice(0, 2).toUpperCase();
 
   return (
-    <div className="sticky top-0 z-20 border-b border-border bg-[rgba(11,18,32,0.85)]">
+    <div className="sticky top-0 z-30 border-b bg-[rgba(11,18,32,0.65)] backdrop-blur-md" style={{ borderBottomColor: "rgba(148,163,184,0.08)" }}>
       <div className="h-14 sm:h-16 px-4 flex items-center justify-between py-2">
-        {/* Left: small logo + page title/subtitle */}
-        <div className="flex items-center gap-3 min-w-0">
-          <img src={logo} alt="Horizon" className="h-5 w-auto" />
+        {/* Left: page title + subtitle only (no logo) */}
+        <div className="flex items-center min-w-0">
           <div className="min-w-0">
-            <div className="text-lg sm:text-xl font-semibold tracking-tight truncate">{meta.title}</div>
+            <h1 className="text-lg sm:text-xl font-semibold tracking-tight truncate">{meta.title}</h1>
             <div className="text-xs text-muted-foreground truncate">{meta.subtitle}</div>
           </div>
         </div>

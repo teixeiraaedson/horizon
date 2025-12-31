@@ -23,6 +23,7 @@ import { useAuth } from "@/app/auth/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { navSections } from "@/components/sidebar/nav";
+import logo from "@/assets/horizon-logo.png";
 
 // Collapse toggle (compact)
 type CollapseToggleProps = { collapsed: boolean; onToggle: () => void };
@@ -86,13 +87,10 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
         <SidebarHeader className="px-2 pt-3 pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-                <circle cx="9" cy="9" r="7" fill="rgba(56,189,248,0.22)" />
-                <circle cx="9" cy="9" r="4" fill="rgba(56,189,248,0.35)" />
-              </svg>
-              <div>
+              <img src={logo} alt="Horizon" className="h-5 w-auto" />
+              <div className="min-w-0">
                 <SidebarGroupLabel className="font-semibold leading-tight tracking-tight">Horizon</SidebarGroupLabel>
-                <div className="text-[11px] text-[color:var(--hz-muted)]">Treasury Management Suite</div>
+                <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Treasury Management Suite</div>
               </div>
             </div>
             <SidebarTrigger />
