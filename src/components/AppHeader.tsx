@@ -49,19 +49,18 @@ export const AppHeader = () => {
   return (
     <div className="topbar">
       <div className="px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          {/* Mobile hamburger to open drawer */}
+        <div className="flex items-center gap-4">
           <div className="md:hidden">
             <SidebarTrigger />
           </div>
           <img src={logo} className="h-7 w-auto" alt="Horizon Logo" />
           <div className="leading-tight">
-            <div className="font-semibold tracking-wide">Horizon</div>
+            <div className="font-semibold tracking-tight">Horizon</div>
             <div className="text-xs text-muted-foreground -mt-0.5">Treasury Management Suite</div>
           </div>
           {settings.mockMode && <Badge className="ml-2" variant="secondary">Mock Mode</Badge>}
-          <div className="ml-4">
-            <div className="text-lg font-semibold">{meta.title}</div>
+          <div className="ml-6">
+            <div className="text-xl sm:text-2xl font-semibold tracking-tight">{meta.title}</div>
             <div className="text-xs text-muted-foreground">{meta.subtitle}</div>
           </div>
         </div>
