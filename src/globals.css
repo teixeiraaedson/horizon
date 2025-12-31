@@ -56,3 +56,15 @@
     @apply text-foreground;
   }
 }
+
+@layer utilities {
+  /* Hide scrollbars while keeping scroll functionality */
+  .no-scrollbar {
+    -ms-overflow-style: none;      /* IE and Edge */
+    scrollbar-width: none;         /* Firefox */
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+}

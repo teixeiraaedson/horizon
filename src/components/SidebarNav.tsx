@@ -72,8 +72,8 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
   const location = useLocation();
   const { user, signOut } = useAuth();
 
-  // Compact item sizing and active styles
-  const itemBase = "px-3 py-2 rounded-lg gap-2 text-sm leading-5";
+  // Compact item sizing and active styles (inline row)
+  const itemBase = "flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] leading-5 font-medium";
   const itemActive = "bg-slate-800/40 border border-slate-700/40";
   const itemInactive = "border border-transparent hover:bg-slate-900/40 hover:border-slate-700/40";
 
@@ -81,13 +81,15 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
     <SidebarProvider>
       <Sidebar
         collapsible="icon"
-        className="bg-[var(--hz-surface0)] text-[var(--hz-text)] h-[100vh] overflow-y-auto min-w-0 p-2 thin-scrollbar"
-        style={{ borderRightWidth: "1px", borderRightStyle: "solid", borderRightColor: "rgba(148,163,184,0.08)" }}
+        className="bg-[var(--hz-surface0)] text-[var(--hz-text)] h-[100vh] overflow-y-hidden min-w-0 p-2 border-r border-white/5"
       >
         <SidebarHeader className="px-2 pt-3 pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <img src={logo} alt="Horizon" className="h-5 w-auto" />
+              <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+                <circle cx="9" cy="9" r="7" fill="rgba(56,189,248,0.22)" />
+                <circle cx="9" cy="9" r="4" fill="rgba(56,189,248,0.35)" />
+              </svg>
               <div className="min-w-0">
                 <SidebarGroupLabel className="font-semibold leading-tight tracking-tight">Horizon</SidebarGroupLabel>
                 <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Treasury Management Suite</div>
@@ -97,11 +99,11 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
           </div>
         </SidebarHeader>
         <SidebarSeparator className="bg-transparent" />
-        <SidebarContent>
+        <SidebarContent className="overflow-y-auto no-scrollbar">
           {navSections.map((section, idx) => (
             <React.Fragment key={section.id}>
               <SidebarGroup className={cn("mt-1")}>
-                <SidebarGroupLabel className="mt-4 mb-2 text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
+                <SidebarGroupLabel className="mt-4 mb-2 text-[11px] uppercase tracking-wider font-medium text-muted-foreground/70">
                   {section.label}
                 </SidebarGroupLabel>
                 <SidebarMenu>
@@ -116,8 +118,10 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
                           className={cn(itemBase, active ? itemActive : itemInactive)}
                         >
                           <NavItemLink to={it.to}>
-                            {React.cloneElement(it.icon as React.ReactElement, { className: "h-4 w-4 text-slate-300" })}
-                            <span className="text-[13px] leading-5 font-medium text-slate-200/90 group-data-[collapsible=icon]:hidden">
+                            {React.cloneElement(it.icon as React.ReactElement, {
+                              className: "h-4 w-4 shrink-0 text-slate-300",
+                            })}
+                            <span className="truncate whitespace-nowrap text-[13px] leading-5 font-medium text-slate-200/90 group-data-[collapsible=icon]:hidden">
                               {it.label}
                             </span>
                           </NavItemLink>
