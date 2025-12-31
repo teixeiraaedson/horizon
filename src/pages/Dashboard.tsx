@@ -50,11 +50,11 @@ export default function Dashboard() {
       <BannerCard pendingCount={pending.length} onAction={() => navigate("/release-queue")} />
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 xl:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-5 xl:gap-6">
         <ActionCard
           title="Fund"
           description="Add funds to a wallet"
-          icon={<Landmark className="h-4 w-4" style={{ color: "var(--green)" }} />}
+          icon={<Landmark className="h-4 w-4" style={{ color: "var(--hz-green)" }} />}
           accent="green"
           ctaLabel="Fund"
           onClick={() => navigate("/fund")}
@@ -62,7 +62,7 @@ export default function Dashboard() {
         <ActionCard
           title="Send"
           description="Move funds between wallets"
-          icon={<ArrowRightLeft className="h-4 w-4" style={{ color: "var(--blue)" }} />}
+          icon={<ArrowRightLeft className="h-4 w-4" style={{ color: "var(--hz-blue)" }} />}
           accent="blue"
           ctaLabel="Send"
           onClick={() => navigate("/send")}
@@ -70,7 +70,7 @@ export default function Dashboard() {
         <ActionCard
           title="Withdraw"
           description="Convert to bank"
-          icon={<WalletIcon className="h-4 w-4" style={{ color: "var(--orange)" }} />}
+          icon={<WalletIcon className="h-4 w-4" style={{ color: "var(--hz-orange)" }} />}
           accent="orange"
           ctaLabel="Withdraw"
           onClick={() => navigate("/withdraw")}
@@ -78,29 +78,29 @@ export default function Dashboard() {
       </div>
 
       {/* Key Metrics */}
-      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-        <MetricCard label="Total Volume" value={`$${metrics.volume.toLocaleString()}`} icon={<Landmark className="h-4 w-4" style={{ color: "var(--blue)" }} />} accent="blue" />
-        <MetricCard label="Avg Settlement" value={`$${metrics.avgSettlement.toLocaleString()}`} icon={<CheckCircle2 className="h-4 w-4" style={{ color: "var(--green)" }} />} accent="green" />
-        <MetricCard label="Exceptions Today" value={metrics.exceptionsToday} icon={<AlertTriangle className="h-4 w-4" style={{ color: "var(--orange)" }} />} accent="orange" />
-        <MetricCard label="Pending Approvals" value={metrics.pendingCount} icon={<CheckCircle2 className="h-4 w-4" style={{ color: "var(--orange)" }} />} accent="orange" />
+      <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 xl:gap-6">
+        <MetricCard label="Total Volume" value={`$${metrics.volume.toLocaleString()}`} icon={<Landmark className="h-4 w-4" style={{ color: "var(--hz-blue)" }} />} accent="blue" />
+        <MetricCard label="Avg Settlement" value={`$${metrics.avgSettlement.toLocaleString()}`} icon={<CheckCircle2 className="h-4 w-4" style={{ color: "var(--hz-green)" }} />} accent="green" />
+        <MetricCard label="Exceptions Today" value={metrics.exceptionsToday} icon={<AlertTriangle className="h-4 w-4" style={{ color: "var(--hz-orange)" }} />} accent="orange" />
+        <MetricCard label="Pending Approvals" value={metrics.pendingCount} icon={<CheckCircle2 className="h-4 w-4" style={{ color: "var(--hz-orange)" }} />} accent="orange" />
       </div>
-      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-        <MetricCard label="Today's Velocity" value={`${metrics.todays} txns`} icon={<ArrowRight className="h-4 w-4" style={{ color: "var(--blue)" }} />} accent="blue" />
-        <MetricCard label="Completed Today" value={txs.filter(t=>t.status==="COMPLETED").length} icon={<CheckCircle2 className="h-4 w-4" style={{ color: "var(--green)" }} />} accent="green" />
-        <MetricCard label="Failed/Rejected" value={txs.filter(t=>t.status==="FAILED"||t.status==="REJECTED").length} icon={<AlertTriangle className="h-4 w-4" style={{ color: "var(--red)" }} />} accent="orange" />
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 xl:gap-6">
+        <MetricCard label="Today's Velocity" value={`${metrics.todays} txns`} icon={<ArrowRight className="h-4 w-4" style={{ color: "var(--hz-blue)" }} />} accent="blue" />
+        <MetricCard label="Completed Today" value={txs.filter(t=>t.status==="COMPLETED").length} icon={<CheckCircle2 className="h-4 w-4" style={{ color: "var(--hz-green)" }} />} accent="green" />
+        <MetricCard label="Failed/Rejected" value={txs.filter(t=>t.status==="FAILED"||t.status==="REJECTED").length} icon={<AlertTriangle className="h-4 w-4" style={{ color: "var(--hz-red)" }} />} accent="red" />
       </div>
 
       {/* Recent Transactions */}
-      <Card className="surface-1 card-sheen card-hover mt-6">
+      <Card className="surface-1 card-sheen card-hover mt-5">
         <div className="px-4 py-3 flex items-center justify-between border-b" style={{ borderColor: "var(--hz-border)" }}>
           <div className="text-sm text-muted-foreground">Recent Transactions</div>
-          <button onClick={() => navigate("/audit")} className="text-[var(--hz-blue)] hover:underline inline-flex items-center gap-1">
+          <button onClick={() => navigate("/audit")} className="text-[color:var(--hz-blue)] hover:underline inline-flex items-center gap-1">
             View All →
           </button>
         </div>
         <CardContent className="p-0">
           <DataTable>
-            <Table className="w-full min-w-[720px]">
+            <Table className="w-full">
               <TableHeader>
                 <TableRow>
                   <TableHead>Type</TableHead>
@@ -112,12 +112,23 @@ export default function Dashboard() {
               <TableBody>
                 {txs.slice(0,10).map((t) => (
                   <TableRow key={t.id} className="cursor-pointer" onClick={() => setSelected(t)}>
-                    <TableCell>{t.type}</TableCell>
+                    <TableCell className="whitespace-nowrap">{t.type}</TableCell>
                     <TableCell><StatusBadge status={t.status} /></TableCell>
-                    <TableCell>${t.amount.toLocaleString()}</TableCell>
-                    <TableCell><Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); setSelected(t); }}>View</Button></TableCell>
+                    <TableCell className="whitespace-nowrap">${t.amount.toLocaleString()}</TableCell>
+                    <TableCell>
+                      <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); setSelected(t); }}>
+                        View
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
+                {!txs.length && (
+                  <TableRow>
+                    <TableCell colSpan={4} className="py-8 text-center text-muted-foreground">
+                      No transactions yet
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </DataTable>
