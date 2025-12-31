@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import PageLayout from "@/components/PageLayout";
+import PageCenter from "@/components/PageCenter";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
@@ -57,7 +57,7 @@ export default function Transfer() {
   };
 
   return (
-    <PageLayout variant="center">
+    <PageCenter maxWidth="2xl">
       <Card className="w-full rounded-2xl card-sheen">
         <CardHeader>
           <div>
@@ -146,6 +146,6 @@ export default function Transfer() {
           </div>
         </CardContent>
       </Card>
-    </PageLayout>
+    </PageCenter>
   );
 }
