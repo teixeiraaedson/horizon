@@ -9,21 +9,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-[0_0_12px_rgba(56,189,248,0.12)]",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline:
-          "border border-[var(--hz-border)] bg-[rgba(2,6,12,0.35)] hover:border-[var(--hz-border-strong)] hover:bg-[rgba(148,163,184,0.08)] hover:shadow-[0_0_10px_rgba(56,189,248,0.12)]",
-        secondary:
-          "border border-[var(--hz-border)] bg-[var(--hz-surface1)] text-foreground hover:bg-[rgba(148,163,184,0.10)]",
-        ghost:
-          "hover:bg-[rgba(148,163,184,0.08)] hover:text-foreground",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline: "border border-border bg-transparent text-foreground hover:bg-muted/20",
+        secondary: "border border-border bg-card text-foreground hover:bg-muted/20",
+        ghost: "hover:bg-muted/20 hover:text-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
         default: "h-10 px-4 py-2",
-        sm: "h-8 rounded-md px-3",
+        sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
       },
