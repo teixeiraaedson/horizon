@@ -2,14 +2,23 @@
 
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "@/app/auth/AuthContext";
+import { useSupabaseSession } from "@/app/auth/SupabaseSessionContext";
 
 type Props = { children: React.ReactNode };
 
 const ProtectedRoute: React.FC<Props> = ({ children }) => {
-  const { user } = useAuth();
+  const { user, loading } = useSupabaseSession();
+
+  if (loading) {
+    // While we determine session, render nothing to avoid flicker
+    return null;
+  }
+
   if (!user) return <Navigate to="/auth" replace />;
-  if ((user as any).verified === false) return <Navigate to="/verify" replace />;
+
+  const isVerified = !!user.email_confirmed_at;
+  if (!isVerified) return <Navigate to="/verify" replace />;
+
   return <>{children}</>;
 };
 

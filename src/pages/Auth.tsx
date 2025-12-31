@@ -1,11 +1,11 @@
 "use client";
 
 import { Layout } from "@/components/Layout";
-import { useAuth } from "@/app/auth/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 function meetsRules(pw: string) {
   const minLen = pw.length >= 12;
@@ -17,29 +17,31 @@ function meetsRules(pw: string) {
 }
 
 export default function Auth() {
-  const { signUp, login, signInMock } = useAuth();
-  const [email, setEmail] = useState("user@demo.horizon");
-  const [password, setPassword] = useState("DemoPassw0rd!");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const onSignUp = () => {
+  const onSignUp = async () => {
     setError(null);
-    const res = signUp(email.trim(), password);
-    if (!res.ok) {
-      setError(res.error || "Sign up failed.");
+    const res = await supabase.auth.signUp({ email: email.trim(), password });
+    if (res.error) {
+      setError(res.error.message || "Sign up failed.");
       return;
     }
+    // Navigate to verify page to instruct the user
     window.location.href = "/verify";
   };
 
-  const onLogin = () => {
+  const onLogin = async () => {
     setError(null);
-    const res = login(email.trim(), password);
-    if (!res.ok) {
-      setError(res.error || "Login failed.");
+    const res = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    if (res.error) {
+      setError(res.error.message || "Login failed.");
       return;
     }
-    window.location.href = "/dashboard";
+    const { data } = await supabase.auth.getUser();
+    const confirmed = !!data.user?.email_confirmed_at;
+    window.location.href = confirmed ? "/dashboard" : "/verify";
   };
 
   return (
@@ -57,10 +59,6 @@ export default function Auth() {
             <div className="flex gap-2">
               <Button onClick={onLogin}>Log in</Button>
               <Button variant="outline" onClick={onSignUp} disabled={!meetsRules(password)}>Sign up</Button>
-            </div>
-            <div className="text-xs space-x-2">
-              <Button variant="outline" onClick={() => signInMock("readonly@demo.horizon", "readonly")}>Log in as ReadOnly demo</Button>
-              <Button variant="outline" onClick={() => signInMock("userdemo@demo.horizon", "user")}>Log in as User demo</Button>
             </div>
             <div className="text-xs">
               <a href="/forgot-password" className="underline">Forgot password?</a>
