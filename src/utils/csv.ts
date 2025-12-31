@@ -24,3 +24,16 @@ export function downloadCSV<T extends Record<string, any>>(rows: T[], filename: 
   a.click();
   a.remove();
 }
+
+// Pure CSV generator for tests and internal use
+export function toCSV(rows: Record<string, any>[], columns: string[]) {
+  const escape = (v: any) => {
+    if (v == null) return "";
+    const s = String(typeof v === "object" ? JSON.stringify(v) : v);
+    if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+    return s;
+  };
+  const header = columns.join(",");
+  const body = rows.map(r => columns.map(c => escape(r[c])).join(",")).join("\n");
+  return header + "\n" + body;
+}

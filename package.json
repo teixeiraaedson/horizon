@@ -10,7 +10,10 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
-    "test:ci": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "test:ci": "vitest --coverage",
+    "e2e": "playwright test",
+    "ci": "npm run lint && npm run test:coverage && npm run e2e"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

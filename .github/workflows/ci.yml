@@ -20,6 +20,10 @@ jobs:
       - name: Install
         run: npm ci
       - name: Lint
-        run: npm run lint --if-present
-      - name: Test with coverage
-        run: npm run test:ci --if-present
+        run: npm run lint
+      - name: Unit tests with coverage
+        run: npm run test:coverage
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      - name: E2E smoke (headless)
+        run: npm run e2e

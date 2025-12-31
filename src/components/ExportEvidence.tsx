@@ -4,17 +4,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useMockStore } from "@/mock/store";
-
-function toCSV(rows: Record<string, any>[], columns: string[]) {
-  const escape = (v: any) => {
-    if (v === null || v === undefined) return "";
-    const s = String(v);
-    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-  };
-  const header = columns.join(",");
-  const body = rows.map(r => columns.map(c => escape(r[c])).join(",")).join("\n");
-  return header + "\n" + body;
-}
+import { toCSV } from "@/utils/csv";
 
 function downloadCSV(filename: string, csv: string) {
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
