@@ -48,9 +48,9 @@ const ExportEvidence: React.FC = () => {
   };
 
   const exportBalances = () => {
-    const wallets = store.listWallets().data;
-    const cols = ["id","name","balance","ownerId","type","createdAt"];
-    const csv = toCSV(wallets as any[], cols);
+    const balances = store.listWalletBalances().data;
+    const cols = ["walletId","currency","balance","updatedAt"];
+    const csv = toCSV(balances as any[], cols);
     downloadCSV("balances.csv", csv);
   };
 

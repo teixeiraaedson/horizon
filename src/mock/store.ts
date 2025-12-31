@@ -111,6 +111,12 @@ export function useMockStore() {
     return envelope(rows);
   }
 
+  // ADD: expose raw wallet balances (currency + updatedAt) for CSV export
+  function listWalletBalances(): SuccessEnvelope<WalletBalance[]> {
+    seed();
+    return envelope([...db.balances]);
+  }
+
   function listTransactions(): SuccessEnvelope<Transaction[]> {
     seed();
     const rows = [...db.transactions].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
@@ -520,6 +526,7 @@ export function useMockStore() {
     getTransaction,
     listAudit,
     listWebhooks,
+    listWalletBalances,
     // commands
     createFund,
     createSend,

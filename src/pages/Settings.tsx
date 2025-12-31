@@ -6,9 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 export default function Settings() {
   const { settings, setSettings } = useSettings();
+  const navigate = useNavigate();
 
   return (
     <Layout>
@@ -38,6 +41,18 @@ export default function Settings() {
               />
               WEBHOOK_SECRET configured:{" "}
               <span className="font-semibold">Unknown (mock)</span>
+            </div>
+
+            <div className="flex items-center justify-between gap-4 pt-2">
+              <div>
+                <div className="font-medium">Connectivity Probe</div>
+                <div className="text-xs text-muted-foreground">
+                  Internal sandbox issuer probe (no external calls)
+                </div>
+              </div>
+              <Button variant="outline" onClick={() => navigate("/connectivity-probe")}>
+                Open Probe
+              </Button>
             </div>
           </CardContent>
         </Card>

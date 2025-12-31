@@ -1,4 +1,3 @@
-= 80%.">
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
@@ -10,7 +9,7 @@ export default defineConfig({
       functions: 80,
       lines: 80,
       include: ["src/lib/**/*.ts"],
-      exclude: ["**/*.test.tsx", "**/*.test.tsx", "supabase/**"],
+      exclude: ["**/*.test.tsx", "supabase/**"],
     },
   },
 });
