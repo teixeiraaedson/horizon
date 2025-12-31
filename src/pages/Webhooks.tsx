@@ -1,84 +1,169 @@
 "use client";
 
-import { Layout } from "@/components/Layout";
-import { useMockStore } from "@/mock/store";
-import { useEffect, useState } from "react";
-import type { WebhookEvent, UUID } from "@/types/core";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useEffect, useState } from "react";
+import { PageShell } from "@/components/layout/PageShell";
+import { CenteredCard } from "@/components/layout/CenteredCard";
+import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
-import { downloadCSV } from "@/utils/csv";
-import { DataTable } from "@/components/DataTable";
+import { useMockStore } from "@/mock/store";
+import { useAuth } from "@/app/auth/AuthContext";
+
+const PROJECT_ID = "vbofqbuztblknzialrdp";
+const RECEIVER_URL = `https://${PROJECT_ID}.supabase.co/functions/v1/webhook-receiver`;
+const SIMULATOR_URL = `https://${PROJECT_ID}.supabase.co/functions/v1/webhook-simulator`;
+
+type EventType =
+  | "settlement.completed"
+  | "transfer.completed"
+  | "withdraw.completed"
+  | "settlement.failed"
+  | "transfer.failed"
+  | "withdraw.failed";
 
 export default function Webhooks() {
-  const mock = useMockStore();
   const { toast } = useToast();
-  const [events, setEvents] = useState<WebhookEvent[]>([]);
-  const [txId, setTxId] = useState("");
+  const store = useMockStore();
+  const { user } = useAuth();
+  const [rows, setRows] = useState(store.listWebhooks().data);
+  const [transactionId, setTransactionId] = useState("");
+  const [eventType, setEventType] = useState<EventType>("settlement.completed");
 
-  const refresh = () => setEvents(mock.listWebhooks().data);
+  const isAdmin = (user?.role ?? "user") === "admin";
+
+  const refresh = () => {
+    setRows(store.listWebhooks().data);
+  };
+
   useEffect(() => {
     refresh();
   }, []);
 
-  const simulate = () => {
-    if (!txId) return;
-    const res = mock.simulateWebhook({ transactionId: txId as UUID, eventType: "settlement.completed" });
-    toast({ title: res.data.deduped ? "Deduped" : "Simulated", description: "Webhook processed" });
-    refresh();
+  const simulate = async () => {
+    if (!isAdmin) {
+      toast({ title: "Forbidden", description: "Admin only." });
+      return;
+    }
+    if (!transactionId || !eventType) {
+      toast({ title: "Missing fields", description: "Provide transaction and event type." });
+      return;
+    }
+    const res = await fetch(SIMULATOR_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Minimal Authorization marker; in a real app, pass JWT
+        "Authorization": "Bearer admin",
+      },
+      body: JSON.stringify({ transaction_id: transactionId, event_type: eventType }),
+    });
+    const body = await res.json();
+    if (res.ok) {
+      toast({ title: "Simulated", description: `Event ${eventType} sent.` });
+      refresh();
+    } else {
+      toast({ title: "Simulation failed", description: body?.error?.message ?? "Unknown error" });
+    }
   };
 
-  const replay = (e: WebhookEvent) => {
-    // Replay by sending exact same payload -> will dedupe
-    const res = mock.simulateWebhook({ transactionId: e.payload.data.transaction_id as UUID, eventType: e.eventType });
-    toast({ title: res.data.deduped ? "Deduped" : "Replayed", description: "Processed" });
-    refresh();
+  const replay = async (row: any) => {
+    if (!isAdmin) {
+      toast({ title: "Forbidden", description: "Admin only." });
+      return;
+    }
+    const txId = row?.payload?.data?.transaction_id;
+    const type = row?.eventType || row?.event_type;
+    if (!txId || !type) {
+      toast({ title: "Invalid event", description: "Missing transaction or event type." });
+      return;
+    }
+    const res = await fetch(SIMULATOR_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer admin",
+      },
+      body: JSON.stringify({ transaction_id: txId, event_type: type }),
+    });
+    const body = await res.json();
+    if (res.ok) {
+      toast({ title: "Replayed", description: `Event ${type} reprocessed.` });
+      refresh();
+    } else {
+      toast({ title: "Replay failed", description: body?.error?.message ?? "Unknown error" });
+    }
   };
 
   return (
-    <Layout>
-      <div className="flex items-end gap-2 mb-4">
-        <div className="flex-1 max-w-sm">
-          <label className="block text-sm mb-1 text-muted-foreground">Transaction ID</label>
-          <Input value={txId} onChange={(e) => setTxId(e.target.value)} placeholder="Enter transaction id" className="input-dark" />
-        </div>
-        <Button onClick={simulate} className="hover:shadow-[0_0_24px_rgba(56,189,248,0.10)]">Simulate Event</Button>
-        <Button variant="outline" onClick={() => downloadCSV(events as any, "webhook_events.csv")}>Export CSV</Button>
-      </div>
-      <Card className="surface-1 card-sheen card-hover">
-        <CardHeader><CardTitle>Webhook Events</CardTitle></CardHeader>
-        <CardContent className="p-0">
-          <DataTable>
+    <PageShell>
+      <CenteredCard maxWidth="3xl">
+        <CardHeader className="flex items-center justify-between">
+          <div>
+            <CardTitle>Webhooks</CardTitle>
+            <div className="mt-1 text-sm text-muted-foreground">Event-driven settlement simulation</div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Simulator (Admin only) */}
+          <div className="rounded-md border border-border p-3">
+            <div className="mb-2 text-sm font-medium">Simulate Event (Admin)</div>
+            <div className="flex items-center gap-2">
+              <Input value={transactionId} onChange={(e) => setTransactionId(e.target.value)} placeholder="Transaction ID" className="input-dark flex-1" />
+              <Select value={eventType} onValueChange={(v) => setEventType(v as EventType)}>
+                <SelectTrigger className="input-dark w-56">
+                  <SelectValue placeholder="Event type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="settlement.completed">settlement.completed</SelectItem>
+                  <SelectItem value="transfer.completed">transfer.completed</SelectItem>
+                  <SelectItem value="withdraw.completed">withdraw.completed</SelectItem>
+                  <SelectItem value="settlement.failed">settlement.failed</SelectItem>
+                  <SelectItem value="transfer.failed">transfer.failed</SelectItem>
+                  <SelectItem value="withdraw.failed">withdraw.failed</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button onClick={simulate} disabled={!isAdmin}>Simulate Event</Button>
+            </div>
+          </div>
+
+          {/* Events table */}
+          <div className="overflow-x-auto">
             <Table className="w-full">
               <TableHeader>
                 <TableRow>
-                  <TableHead>ID</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Payload Hash</TableHead>
                   <TableHead>Received</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Transaction</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {events.map((e) => (
-                  <TableRow key={e.id}>
-                    <TableCell className="font-mono text-xs">{e.id}</TableCell>
-                    <TableCell>{e.eventType}</TableCell>
-                    <TableCell>{e.status}</TableCell>
-                    <TableCell className="font-mono text-xs">{e.payloadHash}</TableCell>
-                    <TableCell>{new Date(e.receivedAt).toLocaleString()}</TableCell>
-                    <TableCell><Button size="sm" variant="outline" onClick={() => replay(e)}>Replay</Button></TableCell>
+                {rows.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={5} className="py-8 text-center text-muted-foreground">No events yet</TableCell>
+                  </TableRow>
+                )}
+                {rows.map((r: any) => (
+                  <TableRow key={r.id}>
+                    <TableCell className="whitespace-nowrap">{new Date(r.createdAt ?? r.created_at ?? r.receivedAt).toLocaleString()}</TableCell>
+                    <TableCell className="whitespace-nowrap">{r.eventType ?? r.event_type}</TableCell>
+                    <TableCell className="whitespace-nowrap">{r.payload?.data?.transaction_id ?? "—"}</TableCell>
+                    <TableCell className="whitespace-nowrap">{r.status}</TableCell>
+                    <TableCell className="space-x-2">
+                      <Button variant="outline" size="sm" onClick={() => replay(r)} disabled={!isAdmin}>Replay</Button>
+                      <Button variant="ghost" size="sm" onClick={() => toast({ title: "Payload", description: JSON.stringify(r.payload ?? {}, null, 2) })}>View</Button>
+                    </TableCell>
                   </TableRow>
                 ))}
-                {!events.length && <TableRow><TableCell colSpan={6} className="text-muted-foreground">No events</TableCell></TableRow>}
               </TableBody>
             </Table>
-          </DataTable>
+          </div>
         </CardContent>
-      </Card>
-    </Layout>
+      </CenteredCard>
+    </PageShell>
   );
 }
