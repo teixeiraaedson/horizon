@@ -68,13 +68,15 @@ const SidebarProvider = React.forwardRef<
     const isMobile = useIsMobile();
     const [openMobile, setOpenMobile] = React.useState(false);
 
-    // Initialize expanded on desktop, collapsed on tablet, drawer on mobile
+    // Initialize expanded/collapsed responsively, override with localStorage if present.
     const initialOpen = React.useMemo(() => {
       if (typeof window !== "undefined") {
+        const persisted = localStorage.getItem("sidebarCollapsed");
+        if (persisted === "true") return false;
         const w = window.innerWidth;
-        if (w >= 1024) return true; // lg
-        if (w >= 768) return false; // md collapsed
-        return false; // sm uses drawer
+        if (w >= 1024) return true;
+        if (w >= 768) return false;
+        return false;
       }
       return defaultOpen;
     }, []);
@@ -89,13 +91,19 @@ const SidebarProvider = React.forwardRef<
         } else {
           _setOpen(openState);
         }
+        // Persist to cookie (existing) and localStorage (Lovable requirement)
         document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+        try {
+          localStorage.setItem("sidebarCollapsed", openState ? "false" : "true");
+        } catch {}
       },
       [setOpenProp, open],
     );
 
     const toggleSidebar = React.useCallback(() => {
-      return isMobile ? setOpenMobile((o) => !o) : setOpen((o) => !o);
+      return isMobile
+        ? setOpenMobile((o) => !o)
+        : setOpen((o) => !o);
     }, [isMobile, setOpen, setOpenMobile]);
 
     React.useEffect(() => {
