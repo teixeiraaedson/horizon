@@ -2,16 +2,17 @@
 
 import { useAuth } from "@/app/auth/AuthContext";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Bell } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { SearchInput } from "@/components/SearchInput";
 import { useMockStore } from "@/mock/store";
 import { pageMeta } from "@/lib/pageMeta";
+import logo from "@/assets/horizon-logo.png";
 
 export const AppHeader = () => {
-  const { user, switchRole, signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [q, setQ] = useState("");
@@ -26,12 +27,15 @@ export const AppHeader = () => {
   const initials = (user?.email || "U").slice(0, 2).toUpperCase();
 
   return (
-    <div className="sticky top-0 z-20 bg-gradient-to-b from-[rgba(11,18,32,0.86)] to-[rgba(11,18,32,0.62)] border-b border-[var(--hz-border)]">
+    <div className="sticky top-0 z-20 border-b border-border bg-[rgba(11,18,32,0.85)]">
       <div className="h-14 sm:h-16 px-4 flex items-center justify-between">
-        {/* Left: page title + subtitle */}
-        <div className="min-w-0">
-          <div className="text-lg sm:text-xl font-semibold tracking-tight truncate">{meta.title}</div>
-          <div className="text-xs text-muted-foreground truncate">{meta.subtitle}</div>
+        {/* Left: small logo + page title/subtitle */}
+        <div className="flex items-center gap-3 min-w-0">
+          <img src={logo} alt="Horizon" className="h-5 w-auto" />
+          <div className="min-w-0">
+            <div className="text-lg sm:text-xl font-semibold tracking-tight truncate">{meta.title}</div>
+            <div className="text-xs text-muted-foreground truncate">{meta.subtitle}</div>
+          </div>
         </div>
 
         {/* Right: search, bell, avatar */}
@@ -59,21 +63,13 @@ export const AppHeader = () => {
                 <span className="hidden sm:inline truncate max-w-[160px]">{user?.email ?? "Guest"}</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-card border border-border p-2 min-w-[240px]">
-              <DropdownMenuLabel>
-                <div className="leading-tight">
-                  <div className="text-sm font-semibold">Horizon Ops</div>
-                  <div className="text-xs text-muted-foreground">{user?.email ?? "user@demo.horizon"}</div>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
+            <DropdownMenuContent align="end" className="bg-card border border-border p-2 min-w-[200px]">
               <DropdownMenuItem className="hover:bg-muted/20" onClick={() => navigate("/users")}>
                 Profile
               </DropdownMenuItem>
               <DropdownMenuItem className="hover:bg-muted/20" onClick={() => navigate("/settings")}>
                 Settings
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
               <DropdownMenuItem className="hover:bg-muted/20 text-red-500" onClick={() => signOut()}>
                 Log out
               </DropdownMenuItem>

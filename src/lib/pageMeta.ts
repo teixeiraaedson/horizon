@@ -10,14 +10,14 @@ export function pageMeta(pathname: string): PageMeta {
   const map: Record<string, PageMeta> = {
     "/mint": { title: "Mint", subtitle: "Issue new tokens to treasury" },
     "/transfer": { title: "Transfer", subtitle: "Move funds between wallets" },
-    "/redeem": { title: "Redeem", subtitle: "Convert to fiat / withdraw to bank" },
-    "/policy-rules": { title: "Policy Rules", subtitle: "Constraints and approvals for movements" },
-    "/activity-log": { title: "Activity Log", subtitle: "System actions and changes" },
-    "/webhooks": { title: "Webhooks", subtitle: "Issuer simulator and logs" },
-    "/wallets": { title: "Wallets", subtitle: "Balances and details" },
-    "/users": { title: "Users", subtitle: "Accounts and roles" },
-    "/admin-settings": { title: "Admin Settings", subtitle: "Administrative configuration" },
-    "/settings": { title: "Settings", subtitle: "Console configuration and health" },
+    "/redeem": { title: "Redeem", subtitle: "Convert to bank" },
+    "/policy-rules": { title: "Policy Rules", subtitle: "Review and manage controls" },
+    "/wallets": { title: "Wallets", subtitle: "Balances and addresses" },
+    "/activity-log": { title: "Activity Log", subtitle: "Events and actions" },
+    "/webhooks": { title: "Webhooks", subtitle: "Delivery and retries" },
+    "/users": { title: "Users", subtitle: "Access management" },
+    "/admin-settings": { title: "Admin Settings", subtitle: "Environment and controls" },
+    "/settings": { title: "Settings", subtitle: "Preferences" },
     "/auth": { title: "Sign in", subtitle: "Demo users" },
   };
   return map[pathname] ?? base;
