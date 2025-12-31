@@ -91,7 +91,7 @@ export default function Dashboard() {
       </div>
 
       {/* Recent Transactions */}
-      <Card className="surface-1 card-sheen card-hover mt-5">
+      <Card className="surface-1 card-sheen card-hover mt-5 overflow-hidden">
         <div className="px-4 py-3 flex items-center justify-between border-b" style={{ borderColor: "var(--hz-border)" }}>
           <div className="text-sm text-muted-foreground">Recent Transactions</div>
           <button onClick={() => navigate("/audit")} className="text-[color:var(--hz-blue)] hover:underline inline-flex items-center gap-1">
@@ -124,7 +124,7 @@ export default function Dashboard() {
                 ))}
                 {!txs.length && (
                   <TableRow>
-                    <TableCell colSpan={4} className="py-8 text-center text-muted-foreground">
+                    <TableCell colSpan={4} className="py-10 text-center text-muted-foreground">
                       No transactions yet
                     </TableCell>
                   </TableRow>
