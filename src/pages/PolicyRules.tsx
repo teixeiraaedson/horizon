@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { PageShell } from "@/components/layout/PageShell";
-import { CenteredCard } from "@/components/layout/CenteredCard";
-import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import PageLayout from "@/components/PageLayout";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -143,8 +142,8 @@ export default function PolicyRules() {
   }
 
   return (
-    <PageShell>
-      <CenteredCard maxWidth="3xl">
+    <PageLayout variant="center">
+      <Card className="w-full rounded-2xl card-sheen">
         <CardHeader className="flex items-center justify-between">
           <div>
             <CardTitle>Policy Rules</CardTitle>
@@ -201,7 +200,7 @@ export default function PolicyRules() {
             </Table>
           </div>
         </CardContent>
-      </CenteredCard>
+      </Card>
 
       <Dialog open={open} onOpenChange={(v) => { if (!v) { setOpen(false); resetForm(); } }}>
         <DialogContent>
@@ -262,6 +261,6 @@ export default function PolicyRules() {
           </div>
         </DialogContent>
       </Dialog>
-    </PageShell>
+    </PageLayout>
   );
 }

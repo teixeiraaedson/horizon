@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { PageShell } from "@/components/layout/PageShell";
-import { CenteredCard } from "@/components/layout/CenteredCard";
-import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import PageLayout from "@/components/PageLayout";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -49,8 +48,8 @@ export default function Redeem() {
   };
 
   return (
-    <PageShell>
-      <CenteredCard maxWidth="2xl">
+    <PageLayout variant="center">
+      <Card className="w-full rounded-2xl card-sheen">
         <CardHeader>
           <div>
             <CardTitle>Redeem to Bank</CardTitle>
@@ -123,7 +122,7 @@ export default function Redeem() {
             </Button>
           </div>
         </CardContent>
-      </CenteredCard>
-    </PageShell>
+      </Card>
+    </PageLayout>
   );
 }
