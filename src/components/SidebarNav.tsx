@@ -34,7 +34,7 @@ function CollapseToggle({ collapsed, onToggle }: CollapseToggleProps) {
       className="mt-auto flex w-full items-center justify-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground hover:bg-accent/10"
       aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
     >
-      {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+      {collapsed ? <ChevronRight className="h-[18px] w-[18px]" /> : <ChevronLeft className="h-[18px] w-[18px]" />}
       <span className={collapsed ? "sr-only" : ""}>Collapse</span>
     </button>
   );
@@ -104,10 +104,13 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
                           asChild
                           isActive={active}
                           tooltip={it.label}
-                          className={cn(active ? "sidebar-link-active" : "sidebar-link")}
+                          className={cn(
+                            "gap-2 text-sm", // compact labels + tight spacing
+                            active ? "sidebar-link-active" : "sidebar-link"
+                          )}
                         >
                           <NavItemLink to={it.to}>
-                            {React.cloneElement(it.icon as React.ReactElement, { className: "h-4 w-4 text-inherit" })}
+                            {React.cloneElement(it.icon as React.ReactElement, { className: "h-[18px] w-[18px] text-inherit" })}
                             <span className="text-inherit group-data-[collapsible=icon]:hidden">{it.label}</span>
                           </NavItemLink>
                         </SidebarMenuButton>
@@ -126,7 +129,13 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
         </SidebarContent>
         <SidebarFooter className="border-t border-[color:var(--hz-border)]">
           <div className="p-2 space-y-2">
-            <SidebarFooterControls />
+            {/* Sandbox Mode pill */}
+            <div className="inline-flex items-center gap-2 rounded-md border px-3 py-1 text-xs"
+                 style={{ borderColor: "rgba(245,158,11,0.28)", backgroundColor: "rgba(245,158,11,0.10)" }}>
+              <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: "var(--hz-orange)" }} />
+              <span className="text-[color:var(--hz-text)]">Sandbox Mode</span>
+            </div>
+
             <div className="mt-1 text-xs text-[color:var(--hz-muted)] space-y-2">
               <div className="flex items-center justify-between">
                 <span>Signed in as</span>
@@ -138,11 +147,13 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
                   className="inline-flex items-center gap-1 text-[color:var(--hz-muted)] hover:text-[color:var(--hz-text)]"
                   onClick={() => signOut()}
                 >
-                  <LogOut className="h-4 w-4" />
+                  <LogOut className="h-[18px] w-[18px]" />
                   <span>Sign out</span>
                 </button>
               </div>
             </div>
+
+            <SidebarFooterControls />
           </div>
         </SidebarFooter>
       </Sidebar>
