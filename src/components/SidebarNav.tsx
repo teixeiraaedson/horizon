@@ -56,6 +56,20 @@ function SidebarFooterControls() {
   return <CollapseToggle collapsed={collapsed} onToggle={onToggle} />;
 }
 
+function NavItemLink({ to, children }: { to: string; children: React.ReactNode }) {
+  const { isMobile, setOpenMobile } = useSidebar();
+  return (
+    <NavLink
+      to={to}
+      onClick={() => {
+        if (isMobile) setOpenMobile(false);
+      }}
+    >
+      {children}
+    </NavLink>
+  );
+}
+
 export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const { user, signOut } = useAuth();
@@ -95,10 +109,10 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
                           tooltip={it.label}
                           className={cn(active ? "sidebar-link-active" : "sidebar-link")}
                         >
-                          <NavLink to={it.to}>
+                          <NavItemLink to={it.to}>
                             {React.cloneElement(it.icon as React.ReactElement, { className: "h-4 w-4 text-inherit" })}
                             <span className="text-inherit group-data-[collapsible=icon]:hidden">{it.label}</span>
-                          </NavLink>
+                          </NavItemLink>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     );
