@@ -50,43 +50,31 @@ export default function Dashboard() {
       <BannerCard pendingCount={pending.length} onAction={() => navigate("/release-queue")} />
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-        <Card className="surface-1 card-sheen card-hover w-full">
-          <CardContent className="py-0">
-            <ActionCard
-              title="Fund"
-              description="Add funds to a wallet"
-              icon={<Landmark className="h-4 w-4" style={{ color: "var(--green)" }} />}
-              accent="green"
-              ctaLabel="Fund"
-              onClick={() => navigate("/fund")}
-            />
-          </CardContent>
-        </Card>
-        <Card className="surface-1 card-sheen card-hover w-full">
-          <CardContent className="py-0">
-            <ActionCard
-              title="Send"
-              description="Move funds between wallets"
-              icon={<ArrowRightLeft className="h-4 w-4" style={{ color: "var(--blue)" }} />}
-              accent="blue"
-              ctaLabel="Send"
-              onClick={() => navigate("/send")}
-            />
-          </CardContent>
-        </Card>
-        <Card className="surface-1 card-sheen card-hover w-full">
-          <CardContent className="py-0">
-            <ActionCard
-              title="Withdraw"
-              description="Convert to bank"
-              icon={<WalletIcon className="h-4 w-4" style={{ color: "var(--orange)" }} />}
-              accent="orange"
-              ctaLabel="Withdraw"
-              onClick={() => navigate("/withdraw")}
-            />
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 xl:gap-6">
+        <ActionCard
+          title="Fund"
+          description="Add funds to a wallet"
+          icon={<Landmark className="h-4 w-4" style={{ color: "var(--green)" }} />}
+          accent="green"
+          ctaLabel="Fund"
+          onClick={() => navigate("/fund")}
+        />
+        <ActionCard
+          title="Send"
+          description="Move funds between wallets"
+          icon={<ArrowRightLeft className="h-4 w-4" style={{ color: "var(--blue)" }} />}
+          accent="blue"
+          ctaLabel="Send"
+          onClick={() => navigate("/send")}
+        />
+        <ActionCard
+          title="Withdraw"
+          description="Convert to bank"
+          icon={<WalletIcon className="h-4 w-4" style={{ color: "var(--orange)" }} />}
+          accent="orange"
+          ctaLabel="Withdraw"
+          onClick={() => navigate("/withdraw")}
+        />
       </div>
 
       {/* Key Metrics */}
