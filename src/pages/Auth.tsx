@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 
 function meetsRules(pw: string) {
   const minLen = pw.length >= 12;
@@ -24,36 +23,83 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [signupSuccess, setSignupSuccess] = useState(false);
+  const [resendMsg, setResendMsg] = useState<string | null>(null);
 
   const onSignUp = async () => {
     setError(null);
+    setResendMsg(null);
+    setSignupSuccess(false);
+
     if (INVITE_ONLY) return;
     if (!meetsRules(password)) {
       setError("Password does not meet complexity rules.");
       return;
     }
     setLoading(true);
-    const res = await supabase.auth.signUp({ email: email.trim(), password });
+    const res = await fetch("/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ email: email.trim(), password }),
+    });
     setLoading(false);
-    if (res.error) {
-      setError(res.error.message || "Sign up failed.");
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      setError(body?.error?.message || "Sign up failed.");
       return;
     }
-    window.location.href = "/verify";
+    setSignupSuccess(true);
+    localStorage.setItem("pendingEmail", email.trim());
   };
 
   const onLogin = async () => {
     setError(null);
     setLoading(true);
-    const res = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ email: email.trim(), password }),
+    });
     setLoading(false);
-    if (res.error) {
-      setError(res.error.message || "Login failed.");
+    if (!res.ok) {
+      // If EMAIL_NOT_VERIFIED, redirect to /verify and store pending email
+      let code = "";
+      try {
+        const body = await res.json();
+        code = body?.error?.code || "";
+      } catch {}
+      if (res.status === 403 && code === "EMAIL_NOT_VERIFIED") {
+        localStorage.setItem("pendingEmail", email.trim());
+        window.location.replace("/verify");
+        return;
+      }
+      setError("Login failed.");
       return;
     }
-    const { data } = await supabase.auth.getUser();
-    const confirmed = !!data.user?.email_confirmed_at;
-    window.location.href = confirmed ? "/dashboard" : "/verify";
+    window.location.replace("/dashboard");
+  };
+
+  const resendVerification = async () => {
+    setResendMsg(null);
+    const target = email.trim() || localStorage.getItem("pendingEmail") || "";
+    if (!target) {
+      setResendMsg("Please enter your email to resend the verification message.");
+      return;
+    }
+    const res = await fetch("/api/auth/resend-verification", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ email: target }),
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      setResendMsg(body?.error?.message || "Failed to resend verification email.");
+      return;
+    }
+    setResendMsg("Verification email sent. Please check your inbox.");
   };
 
   const submitDisabled =
@@ -69,13 +115,13 @@ export default function Auth() {
             <div className="flex gap-2">
               <Button
                 variant={mode === "login" ? "default" : "outline"}
-                onClick={() => setMode("login")}
+                onClick={() => { setMode("login"); setError(null); }}
               >
                 Log in
               </Button>
               <Button
                 variant={mode === "signup" ? "default" : "outline"}
-                onClick={() => setMode("signup")}
+                onClick={() => { setMode("signup"); setError(null); }}
               >
                 Sign up
               </Button>
@@ -117,8 +163,21 @@ export default function Auth() {
               )}
             </div>
 
+            {mode === "signup" && signupSuccess && (
+              <div className="space-y-2">
+                <div className="text-sm text-muted-foreground">
+                  Check your email to verify your account.
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={resendVerification}>Resend verification email</Button>
+                  <Button onClick={() => window.location.replace("/verify")}>Go to Verify</Button>
+                </div>
+                {resendMsg && <div className="text-xs text-muted-foreground">{resendMsg}</div>}
+              </div>
+            )}
+
             <div className="text-xs">
-              <a href="/forgot-password" className="underline">Forgot password?</a>
+              <a href="/auth/reset-password" className="underline">Forgot password?</a>
             </div>
           </CardContent>
         </Card>

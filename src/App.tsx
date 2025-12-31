@@ -11,7 +11,7 @@ import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import { SettingsProvider } from "./app/settings/SettingsContext";
 import { AuthProvider } from "./app/auth/AuthContext";
-import { SupabaseSessionProvider } from "./app/auth/SupabaseSessionContext";
+import { HttpSessionProvider } from "./app/auth/HttpSessionContext";
 import Mint from "./pages/Mint";
 import Transfer from "./pages/Transfer";
 import Redeem from "./pages/Redeem";
@@ -26,12 +26,11 @@ import AuditTrail from "./pages/AuditTrail";
 import AppShell from "./components/layout/AppShell";
 import ConnectivityProbe from "./pages/ConnectivityProbe";
 import VerifyPending from "./pages/VerifyPending";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
+import AuthVerify from "./pages/AuthVerify";
+import AuthResetPassword from "./pages/AuthResetPassword";
+import InviteAccept from "./pages/InviteAccept";
 import ProtectedRoute from "./components/route/ProtectedRoute";
 import AdminRoute from "./components/route/AdminRoute";
-import InviteAccept from "./pages/InviteAccept";
-import AuthCallback from "./pages/AuthCallback";
 
 const queryClient = new QueryClient();
 
@@ -40,17 +39,16 @@ const App = () => (
     <TooltipProvider>
       <SettingsProvider>
         <AuthProvider>
-          <SupabaseSessionProvider>
+          <HttpSessionProvider>
             <Toaster />
             <Sonner />
             <BrowserRouter>
               <Routes>
                 {/* Public auth-related routes */}
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/auth/verify" element={<AuthVerify />} />
+                <Route path="/auth/reset-password" element={<AuthResetPassword />} />
                 <Route path="/verify" element={<VerifyPending />} />
-                <Route path="/auth/callback" element={<AuthCallback />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/invite" element={<InviteAccept />} />
 
                 {/* App shell and protected routes */}
@@ -85,7 +83,7 @@ const App = () => (
                 </Route>
               </Routes>
             </BrowserRouter>
-          </SupabaseSessionProvider>
+          </HttpSessionProvider>
         </AuthProvider>
       </SettingsProvider>
     </TooltipProvider>

@@ -5,18 +5,16 @@ import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/integrations/supabase/client";
-import { useSupabaseSession } from "@/app/auth/SupabaseSessionContext";
 
 export default function VerifyPending() {
-  const { user } = useSupabaseSession();
-  const [email, setEmail] = useState<string>(user?.email ?? "");
+  const [email, setEmail] = useState<string>("");
   const [sent, setSent] = useState(false);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    if (user?.email) setEmail(user.email);
-  }, [user?.email]);
+    const pending = localStorage.getItem("pendingEmail") || "";
+    if (pending) setEmail(pending);
+  }, []);
 
   const resend = async () => {
     setSent(false);
@@ -26,33 +24,19 @@ export default function VerifyPending() {
       setStatusMsg("Please enter your email to resend the verification message.");
       return;
     }
-    const res = await supabase.auth.resend({ type: "signup", email: target });
-    if (res.error) {
-      setStatusMsg(res.error.message || "Failed to resend verification email.");
+    const res = await fetch("/api/auth/resend-verification", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ email: target }),
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      setStatusMsg(body?.error?.message || "Failed to resend verification email.");
       return;
     }
     setSent(true);
     setStatusMsg("Verification email sent. Please check your inbox.");
-  };
-
-  const refreshStatus = async () => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error) {
-      setStatusMsg(error.message);
-      return;
-    }
-    const confirmed = !!data.user?.email_confirmed_at;
-    if (confirmed) {
-      setStatusMsg("Email verified! Redirecting...");
-      setTimeout(() => window.location.replace("/dashboard"), 500);
-    } else {
-      setStatusMsg("Still pending confirmation. Refresh again after clicking the email link.");
-    }
-  };
-
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    window.location.replace("/auth");
   };
 
   return (
@@ -64,10 +48,7 @@ export default function VerifyPending() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="text-sm text-muted-foreground">
-              {user?.email ? `Signed up as ${user.email}` : "Signed up: check your email for a verification link"}
-            </div>
-            <div className="text-sm">
-              Check your email to verify. You must verify before accessing the app.
+              {email ? `Pending verification for ${email}` : "Enter your email to resend the verification link."}
             </div>
             <div className="space-y-2">
               <Input
@@ -77,8 +58,7 @@ export default function VerifyPending() {
               />
               <div className="flex gap-2">
                 <Button onClick={resend}>Resend verification email</Button>
-                <Button variant="outline" onClick={refreshStatus}>Refresh status</Button>
-                <Button variant="outline" onClick={signOut}>Sign out</Button>
+                <Button variant="outline" onClick={() => window.location.replace("/auth")}>Back to login</Button>
               </div>
             </div>
             {sent && <div className="text-xs text-muted-foreground">Verification email sent</div>}
