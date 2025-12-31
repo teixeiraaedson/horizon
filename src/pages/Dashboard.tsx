@@ -57,7 +57,7 @@ export default function Dashboard() {
           icon={<Landmark className="h-4 w-4" style={{ color: "var(--hz-green)" }} />}
           accent="green"
           ctaLabel="Fund"
-          onClick={() => navigate("/fund")}
+          to="/fund"
         />
         <ActionCard
           title="Send"
@@ -65,7 +65,7 @@ export default function Dashboard() {
           icon={<ArrowRightLeft className="h-4 w-4" style={{ color: "var(--hz-blue)" }} />}
           accent="blue"
           ctaLabel="Send"
-          onClick={() => navigate("/send")}
+          to="/send"
         />
         <ActionCard
           title="Withdraw"
@@ -73,7 +73,7 @@ export default function Dashboard() {
           icon={<WalletIcon className="h-4 w-4" style={{ color: "var(--hz-orange)" }} />}
           accent="orange"
           ctaLabel="Withdraw"
-          onClick={() => navigate("/withdraw")}
+          to="/withdraw"
         />
       </div>
 
