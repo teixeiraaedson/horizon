@@ -328,6 +328,7 @@ export function useMockStore() {
   function createFund(input: { walletId: UUID; amount: number }): SuccessEnvelope<{ id: UUID; status: TransactionStatus; reasonCodes: string[]; policyDecision: string; explain: string; }> | ErrorEnvelope {
     seed();
     if (!user) return error("UNAUTHORIZED", "Not signed in");
+    if (user.role === "readonly") return error("FORBIDDEN", "ReadOnly demo cannot perform actions");
 
     const policyRes = policy.evaluateFundOrWithdraw("FUND", input.walletId, input.amount);
     if (policyRes.decision === "BLOCK") {
@@ -383,6 +384,7 @@ export function useMockStore() {
   function createSend(input: { fromWalletId: UUID; toWalletId: UUID; amount: number }): SuccessEnvelope<{ id: UUID; status: TransactionStatus; reasonCodes: string[]; policyDecision: string; explain: string; }> | ErrorEnvelope {
     seed();
     if (!user) return error("UNAUTHORIZED", "Not signed in");
+    if (user.role === "readonly") return error("FORBIDDEN", "ReadOnly demo cannot perform actions");
 
     const policyRes = policy.evaluateSend({
       actorId: user.id,
@@ -444,6 +446,7 @@ export function useMockStore() {
   function createWithdraw(input: { walletId: UUID; amount: number; bankReference?: string }): SuccessEnvelope<{ id: UUID; status: TransactionStatus; reasonCodes: string[]; policyDecision: string; explain: string; }> | ErrorEnvelope {
     seed();
     if (!user) return error("UNAUTHORIZED", "Not signed in");
+    if (user.role === "readonly") return error("FORBIDDEN", "ReadOnly demo cannot perform actions");
 
     const policyRes = policy.evaluateFundOrWithdraw("WITHDRAW", input.walletId, input.amount);
     if (policyRes.decision === "BLOCK") {

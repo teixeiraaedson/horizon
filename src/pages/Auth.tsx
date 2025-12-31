@@ -17,7 +17,7 @@ function meetsRules(pw: string) {
 }
 
 export default function Auth() {
-  const { signUp, login } = useAuth();
+  const { signUp, login, signInMock } = useAuth();
   const [email, setEmail] = useState("user@demo.horizon");
   const [password, setPassword] = useState("DemoPassw0rd!");
   const [error, setError] = useState<string | null>(null);
@@ -57,6 +57,10 @@ export default function Auth() {
             <div className="flex gap-2">
               <Button onClick={onLogin}>Log in</Button>
               <Button variant="outline" onClick={onSignUp} disabled={!meetsRules(password)}>Sign up</Button>
+            </div>
+            <div className="text-xs space-x-2">
+              <Button variant="outline" onClick={() => signInMock("readonly@demo.horizon", "readonly")}>Log in as ReadOnly demo</Button>
+              <Button variant="outline" onClick={() => signInMock("userdemo@demo.horizon", "user")}>Log in as User demo</Button>
             </div>
             <div className="text-xs">
               <a href="/forgot-password" className="underline">Forgot password?</a>
