@@ -17,24 +17,36 @@ function meetsRules(pw: string) {
 }
 
 export default function Auth() {
+  const INVITE_ONLY = String((import.meta as any).env?.VITE_INVITE_ONLY ?? "false").toLowerCase() === "true";
+
+  const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const onSignUp = async () => {
     setError(null);
+    if (INVITE_ONLY) return;
+    if (!meetsRules(password)) {
+      setError("Password does not meet complexity rules.");
+      return;
+    }
+    setLoading(true);
     const res = await supabase.auth.signUp({ email: email.trim(), password });
+    setLoading(false);
     if (res.error) {
       setError(res.error.message || "Sign up failed.");
       return;
     }
-    // Navigate to verify page to instruct the user
     window.location.href = "/verify";
   };
 
   const onLogin = async () => {
     setError(null);
+    setLoading(true);
     const res = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    setLoading(false);
     if (res.error) {
       setError(res.error.message || "Login failed.");
       return;
@@ -44,22 +56,67 @@ export default function Auth() {
     window.location.href = confirmed ? "/dashboard" : "/verify";
   };
 
+  const submitDisabled =
+    loading ||
+    (mode === "signup" ? INVITE_ONLY || !meetsRules(password) : false);
+
   return (
     <Layout>
       <div className="max-w-md">
         <Card>
           <CardHeader><CardTitle>Welcome to Horizon</CardTitle></CardHeader>
           <CardContent className="space-y-4">
-            <Input placeholder="email@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-            <div className="text-xs text-muted-foreground">
-              Password must be at least 12 characters with uppercase, lowercase, number, and special.
-            </div>
-            {error && <div className="text-sm text-red-500">{error}</div>}
             <div className="flex gap-2">
-              <Button onClick={onLogin}>Log in</Button>
-              <Button variant="outline" onClick={onSignUp} disabled={!meetsRules(password)}>Sign up</Button>
+              <Button
+                variant={mode === "login" ? "default" : "outline"}
+                onClick={() => setMode("login")}
+              >
+                Log in
+              </Button>
+              <Button
+                variant={mode === "signup" ? "default" : "outline"}
+                onClick={() => setMode("signup")}
+              >
+                Sign up
+              </Button>
             </div>
+
+            <Input
+              placeholder="email@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Input
+              type="password"
+              placeholder={mode === "signup" ? "Create a password" : "Password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+            {mode === "signup" && (
+              <div className="text-xs text-muted-foreground">
+                Password must be at least 12 characters with uppercase, lowercase, number, and special.
+                {INVITE_ONLY && (
+                  <div className="mt-1 text-amber-600">
+                    Invites only. Ask the admin for an invite link.
+                  </div>
+                )}
+                <div className="mt-1 text-muted-foreground">
+                  Need access? Contact your admin for an invite.
+                </div>
+              </div>
+            )}
+
+            {error && <div className="text-sm text-red-500">{error}</div>}
+
+            <div className="flex gap-2">
+              {mode === "login" ? (
+                <Button onClick={onLogin} disabled={submitDisabled}>Log in</Button>
+              ) : (
+                <Button variant="outline" onClick={onSignUp} disabled={submitDisabled}>Sign up</Button>
+              )}
+            </div>
+
             <div className="text-xs">
               <a href="/forgot-password" className="underline">Forgot password?</a>
             </div>
