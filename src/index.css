@@ -120,6 +120,22 @@
   *::-webkit-scrollbar-track {
     background: transparent;
   }
+
+  /* Ultra-thin scrollbar for sidebar only */
+  .thin-scrollbar {
+    scrollbar-width: thin; /* Firefox */
+  }
+  .thin-scrollbar::-webkit-scrollbar {
+    width: 2px; /* WebKit */
+    height: 2px;
+  }
+  .thin-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(148,163,184,0.35);
+    border-radius: 9999px;
+  }
+  .thin-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }
 
 /* TEMP SAFETY (during verification) */
