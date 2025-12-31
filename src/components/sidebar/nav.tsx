@@ -9,14 +9,15 @@ import {
   ShieldCheck,
   FileText,
   Webhook,
-  Users,
-  Settings,
+  Users as UsersIcon,
+  Settings as SettingsIcon,
 } from "lucide-react";
 
 export type NavItem = {
   label: string;
   to: string;
   icon: ReactNode;
+  adminOnly?: boolean;
 };
 
 export type NavSection = {
@@ -50,9 +51,9 @@ export const navSections: NavSection[] = [
     id: "admin",
     label: "Admin",
     items: [
-      { label: "Users", to: "/users", icon: <Users className="h-4 w-4" /> },
-      { label: "Admin Settings", to: "/admin-settings", icon: <Settings className="h-4 w-4" /> },
-      { label: "Settings", to: "/settings", icon: <Settings className="h-4 w-4" /> },
+      { label: "Users", to: "/users", icon: <UsersIcon className="h-4 w-4" />, adminOnly: true },
+      { label: "Admin Settings", to: "/admin-settings", icon: <SettingsIcon className="h-4 w-4" />, adminOnly: true },
+      { label: "Settings", to: "/settings", icon: <SettingsIcon className="h-4 w-4" /> },
     ],
   },
 ];

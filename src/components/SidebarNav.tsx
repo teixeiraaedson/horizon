@@ -53,7 +53,7 @@ function SidebarFooterControls() {
   return <CollapseToggle collapsed={collapsed} onToggle={onToggle} />;
 }
 
-// REPLACED: NavItemLink to forward props (className, onClick, etc.)
+// Prop-forwarding NavLink so flex row classes apply to the clickable element
 type NavItemLinkProps = React.ComponentProps<typeof NavLink>;
 function NavItemLink({ to, onClick, className, children, ...rest }: NavItemLinkProps) {
   const { isMobile, setOpenMobile } = useSidebar();
@@ -76,24 +76,30 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
   const location = useLocation();
   const { user, signOut } = useAuth();
 
+  const isAdmin = (user?.role ?? "user") === "admin";
+
   // Compact item sizing and active styles (single row on the clickable element)
   const itemBase = "inline-flex w-full items-center gap-3 px-3 py-2 rounded-md text-[13px] leading-5 font-medium";
   const itemActive = "bg-slate-800/40 border border-slate-700/40";
   const itemInactive = "border border-transparent hover:bg-slate-900/40 hover:border-slate-700/40";
 
+  // Filter sections based on adminOnly flag
+  const visibleSections = navSections.map((section) => ({
+    ...section,
+    items: section.items.filter((it) => !it.adminOnly || isAdmin),
+  }));
+
   return (
     <SidebarProvider>
       <Sidebar
         collapsible="icon"
-        className="bg-[var(--hz-surface0)] text-[var(--hz-text)] h-[100vh] overflow-y-hidden min-w-0 p-2 border-r border-white/5"
+        className="bg-[var(--hz-surface0)] text-[var(--hz-text)] h-[100vh] overflow-y-hidden min-w-0 p-2 border-r"
+        style={{ borderRightColor: "rgba(148,163,184,0.08)", borderRightWidth: 1 }}
       >
         <SidebarHeader className="px-2 pt-3 pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-                <circle cx="9" cy="9" r="7" fill="rgba(56,189,248,0.22)" />
-                <circle cx="9" cy="9" r="4" fill="rgba(56,189,248,0.35)" />
-              </svg>
+              <img src={logo} alt="Horizon" className="h-5 w-auto" />
               <div className="min-w-0">
                 <SidebarGroupLabel className="font-semibold leading-tight tracking-tight">Horizon</SidebarGroupLabel>
                 <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Treasury Management Suite</div>
@@ -104,7 +110,7 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
         </SidebarHeader>
         <SidebarSeparator className="bg-transparent" />
         <SidebarContent className="overflow-y-auto no-scrollbar">
-          {navSections.map((section, idx) => (
+          {visibleSections.map((section, idx) => (
             <React.Fragment key={section.id}>
               <SidebarGroup className={cn("mt-1")}>
                 <SidebarGroupLabel className="mt-4 mb-2 text-[11px] uppercase tracking-wider font-medium text-muted-foreground/70">
@@ -121,6 +127,7 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
                           tooltip={it.label}
                           className={cn(itemBase, active ? itemActive : itemInactive)}
                         >
+                          {/* The clickable element itself is the flex row container */}
                           <NavItemLink to={it.to}>
                             {React.cloneElement(it.icon as React.ReactElement, {
                               className: "h-4 w-4 shrink-0 text-slate-300",
@@ -135,7 +142,7 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
                   })}
                 </SidebarMenu>
               </SidebarGroup>
-              {idx < navSections.length - 1 && (
+              {idx < visibleSections.length - 1 && (
                 <div className="px-2 my-2">
                   <SidebarSeparator />
                 </div>
@@ -145,7 +152,7 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
         </SidebarContent>
         <SidebarFooter className="border-t border-[color:var(--hz-border)]">
           <div className="p-2 space-y-2">
-            {/* Sandbox Mode pill (compact) */}
+            {/* Sandbox Mode badge */}
             <div
               className="inline-flex items-center gap-2 rounded-md border px-2.5 py-1 text-[12px]"
               style={{ borderColor: "rgba(245,158,11,0.28)", backgroundColor: "rgba(245,158,11,0.10)" }}
@@ -157,7 +164,7 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
             <div className="text-xs text-slate-400/80 space-y-2">
               <div className="flex items-center justify-between">
                 <span>Signed in as</span>
-                <Badge variant="outline">Admin</Badge>
+                <Badge variant="outline">{isAdmin ? "Admin" : "User"}</Badge>
               </div>
               <div className="flex items-center justify-between">
                 <span className="truncate text-slate-200/90">{user?.email ?? "guest@horizon.local"}</span>
