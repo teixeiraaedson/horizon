@@ -50,9 +50,9 @@ export default function Dashboard() {
       <BannerCard pendingCount={pending.length} onAction={() => navigate("/release-queue")} />
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="surface-1 card-sheen card-hover glow-green">
-          <CardContent className="py-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+        <Card className="surface-1 card-sheen card-hover glow-green w-full">
+          <CardContent className="py-0">
             <ActionCard
               title="Fund"
               description="Add funds to a wallet"
@@ -63,8 +63,8 @@ export default function Dashboard() {
             />
           </CardContent>
         </Card>
-        <Card className="surface-1 card-sheen card-hover glow-blue">
-          <CardContent className="py-5">
+        <Card className="surface-1 card-sheen card-hover glow-blue w-full">
+          <CardContent className="py-0">
             <ActionCard
               title="Send"
               description="Move funds between wallets"
@@ -75,8 +75,8 @@ export default function Dashboard() {
             />
           </CardContent>
         </Card>
-        <Card className="surface-1 card-sheen card-hover glow-orange">
-          <CardContent className="py-5">
+        <Card className="surface-1 card-sheen card-hover glow-orange w-full">
+          <CardContent className="py-0">
             <ActionCard
               title="Withdraw"
               description="Convert to bank"
@@ -90,13 +90,13 @@ export default function Dashboard() {
       </div>
 
       {/* Key Metrics */}
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         <MetricCard label="Total Volume" value={`$${metrics.volume.toLocaleString()}`} icon={<Landmark className="h-4 w-4" style={{ color: "var(--blue)" }} />} accent="blue" />
         <MetricCard label="Avg Settlement" value={`$${metrics.avgSettlement.toLocaleString()}`} icon={<CheckCircle2 className="h-4 w-4" style={{ color: "var(--green)" }} />} accent="green" />
         <MetricCard label="Exceptions Today" value={metrics.exceptionsToday} icon={<AlertTriangle className="h-4 w-4" style={{ color: "var(--orange)" }} />} accent="orange" />
         <MetricCard label="Pending Approvals" value={metrics.pendingCount} icon={<CheckCircle2 className="h-4 w-4" style={{ color: "var(--orange)" }} />} accent="orange" />
       </div>
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
         <MetricCard label="Today's Velocity" value={`${metrics.todays} txns`} icon={<ArrowRight className="h-4 w-4" style={{ color: "var(--blue)" }} />} accent="blue" />
         <MetricCard label="Completed Today" value={txs.filter(t=>t.status==="COMPLETED").length} icon={<CheckCircle2 className="h-4 w-4" style={{ color: "var(--green)" }} />} accent="green" />
         <MetricCard label="Failed/Rejected" value={txs.filter(t=>t.status==="FAILED"||t.status==="REJECTED").length} icon={<AlertTriangle className="h-4 w-4" style={{ color: "var(--red)" }} />} accent="orange" />
@@ -104,15 +104,15 @@ export default function Dashboard() {
 
       {/* Recent Transactions */}
       <Card className="surface-1 card-sheen card-hover mt-6">
-        <div className="px-4 py-3 flex items-center justify-between border-b" style={{ borderColor: "var(--border)" }}>
+        <div className="px-4 py-3 flex items-center justify-between border-b" style={{ borderColor: "var(--hz-border)" }}>
           <div className="text-sm text-muted-foreground">Recent Transactions</div>
-          <button onClick={() => navigate("/audit")} className="text-[var(--blue)] hover:underline inline-flex items-center gap-1">
+          <button onClick={() => navigate("/audit")} className="text-[var(--hz-blue)] hover:underline inline-flex items-center gap-1">
             View All →
           </button>
         </div>
         <CardContent className="p-0">
           <DataTable>
-            <Table className="w-full">
+            <Table className="w-full min-w-[720px]">
               <TableHeader>
                 <TableRow>
                   <TableHead>Type</TableHead>

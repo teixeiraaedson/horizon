@@ -8,7 +8,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
     <AppSidebarLayout>
       <div className="min-h-screen bg-background text-foreground">
         <AppHeader />
-        <div className="p-4">
+        <div className="px-4 sm:px-6 lg:px-8 py-4 w-full">
           {children}
         </div>
       </div>

@@ -19,9 +19,9 @@ import {
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
-const SIDEBAR_WIDTH = "16rem";
+const SIDEBAR_WIDTH = "16.25rem"; // 260px for Lovable spec
 const SIDEBAR_WIDTH_MOBILE = "18rem";
-const SIDEBAR_WIDTH_ICON = "3rem";
+const SIDEBAR_WIDTH_ICON = "4.5rem"; // 72px for collapsed icons-only
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 
 type SidebarContext = {
@@ -66,11 +66,21 @@ const SidebarProvider = React.forwardRef<
     ref,
   ) => {
     const isMobile = useIsMobile();
-    const [openMobile, setOpenMobile] = React.useState(false);
 
-    // This is the internal state of the sidebar.
-    // We use openProp and setOpenProp for control from outside the component.
-    const [_open, _setOpen] = React.useState(defaultOpen);
+    // Initialize expanded/collapsed responsively:
+    // lg (>=1024): expanded, md (768–1023): collapsed, sm (<768): off-canvas
+    const initialOpen = React.useMemo(() => {
+      if (typeof window !== "undefined") {
+        const w = window.innerWidth;
+        if (w >= 1024) return true;
+        if (w >= 768) return false;
+        return false;
+      }
+      return defaultOpen;
+    }, []);
+
+    const [openMobile, setOpenMobile] = React.useState(false);
+    const [_open, _setOpen] = React.useState(initialOpen);
     const open = openProp ?? _open;
     const setOpen = React.useCallback(
       (value: boolean | ((value: boolean) => boolean)) => {
@@ -135,6 +145,14 @@ const SidebarProvider = React.forwardRef<
       ],
     );
 
+    // Choose grid columns based on state and breakpoints
+    const gridCols =
+      isMobile
+        ? "grid-cols-1"
+        : state === "collapsed"
+          ? "md:grid-cols-[var(--sidebar-width-icon)_1fr] lg:grid-cols-[var(--sidebar-width-icon)_1fr]"
+          : "md:grid-cols-[var(--sidebar-width)_1fr] lg:grid-cols-[var(--sidebar-width)_1fr]";
+
     return (
       <SidebarContext.Provider value={contextValue}>
         <TooltipProvider delayDuration={0}>
@@ -147,7 +165,8 @@ const SidebarProvider = React.forwardRef<
               } as React.CSSProperties
             }
             className={cn(
-              "group/sidebar-wrapper flex min-h-svh w-full has-[[data-variant=inset]]:bg-sidebar",
+              "group/sidebar-wrapper grid min-h-svh w-full",
+              gridCols,
               className,
             )}
             ref={ref}
