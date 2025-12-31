@@ -33,9 +33,14 @@ export default function Fund() {
   const onSubmit = (values: FormValues) => {
     const res = mock.createFund(values);
     if ("error" in res) {
-      toast({ title: "Blocked", description: res.error.message });
+      toast({ title: "Policy blocked", description: JSON.stringify(res.error.details ?? res.error.message) });
     } else {
-      toast({ title: "Funded", description: `Transaction ${res.data.id.slice(0,8)} completed.` });
+      const decision = res.data.policyDecision;
+      if (decision === "REQUIRE_APPROVAL") {
+        toast({ title: "Release required", description: "Added to Policy Rules queue (approval pending)." });
+      } else {
+        toast({ title: "Minted", description: `Transaction ${res.data.id.slice(0,8)} completed.` });
+      }
       form.reset({ walletId: "", amount: 1000 });
     }
   };

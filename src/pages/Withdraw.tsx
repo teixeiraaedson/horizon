@@ -33,9 +33,14 @@ export default function Withdraw() {
   const onSubmit = (values: FormValues) => {
     const res = mock.createWithdraw(values);
     if ("error" in res) {
-      toast({ title: "Policy blocked", description: JSON.stringify(res.error.details) });
+      toast({ title: "Policy blocked", description: JSON.stringify(res.error.details ?? res.error.message) });
     } else {
-      toast({ title: "Withdrawal completed", description: `Transaction ${res.data.id.slice(0,8)} completed.` });
+      const decision = res.data.policyDecision;
+      if (decision === "REQUIRE_APPROVAL") {
+        toast({ title: "Release required", description: "Added to Policy Rules queue (approval pending)." });
+      } else {
+        toast({ title: "Withdrawal completed", description: `Transaction ${res.data.id.slice(0,8)} completed.` });
+      }
       form.reset({ walletId: "", amount: 500, bankReference: "" });
     }
   };

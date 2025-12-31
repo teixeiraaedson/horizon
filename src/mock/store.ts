@@ -177,17 +177,27 @@ export function useMockStore() {
   function createFund(input: { walletId: UUID; amount: number }): SuccessEnvelope<{ id: UUID; status: TransactionStatus; reasonCodes: string[]; policyDecision: string; explain: string; }> | ErrorEnvelope {
     seed();
     if (!user) return error("UNAUTHORIZED", "Not signed in");
-    const policyRes = policy.evaluateFundOrWithdraw("FUND", input.amount);
+    const policyRes = policy.evaluateFundOrWithdraw("FUND", input.walletId, input.amount);
+
+    if (policyRes.decision === "BLOCK") {
+      return error("POLICY_BLOCKED", "Policy blocked the movement", {
+        reasonCodes: policyRes.reasonCodes,
+        explain: policyRes.explain,
+      });
+    }
+
+    const requires = policyRes.decision === "REQUIRE_APPROVAL";
+
     const t: Transaction = {
       id: rid(),
       type: "FUND",
-      status: "COMPLETED", // in mock, complete immediately
+      status: requires ? "PENDING_APPROVAL" : "COMPLETED",
       amount: input.amount,
       currency: "USD",
       fromWalletId: null,
       toWalletId: input.walletId,
       actorId: user.id,
-      requiresApproval: false,
+      requiresApproval: requires,
       approvedBy: null,
       approvedAt: null,
       approvalReason: null,
@@ -201,7 +211,7 @@ export function useMockStore() {
       updatedAt: now(),
     };
     db.transactions.push(t);
-    updateBalancesForCompletion(t);
+
     appendAudit({
       actorId: user.id,
       actorEmail: user.email,
@@ -222,6 +232,12 @@ export function useMockStore() {
       reasonCodes: policyRes.reasonCodes,
       payload: { decision: policyRes.decision, explain: policyRes.explain },
     });
+
+    if (!requires) {
+      policy.commitDaily(input.walletId, input.amount);
+      updateBalancesForCompletion(t);
+    }
+
     return envelope({
       id: t.id,
       status: t.status,
@@ -292,7 +308,7 @@ export function useMockStore() {
       payload: { decision: policyRes.decision, explain: policyRes.explain },
     });
     if (!requires) {
-      policy.commitDaily(user.id, input.amount);
+      policy.commitDaily(input.fromWalletId, input.amount);
       updateBalancesForCompletion(t);
     }
     return envelope({
@@ -307,23 +323,27 @@ export function useMockStore() {
   function createWithdraw(input: { walletId: UUID; amount: number; bankReference?: string }): SuccessEnvelope<{ id: UUID; status: TransactionStatus; reasonCodes: string[]; policyDecision: string; explain: string; }> | ErrorEnvelope {
     seed();
     if (!user) return error("UNAUTHORIZED", "Not signed in");
-    const policyRes = policy.evaluateFundOrWithdraw("WITHDRAW", input.amount);
+    const policyRes = policy.evaluateFundOrWithdraw("WITHDRAW", input.walletId, input.amount);
+
     if (policyRes.decision === "BLOCK") {
       return error("POLICY_BLOCKED", "Policy blocked the movement", {
         reasonCodes: policyRes.reasonCodes,
         explain: policyRes.explain,
       });
     }
+
+    const requires = policyRes.decision === "REQUIRE_APPROVAL";
+
     const t: Transaction = {
       id: rid(),
       type: "WITHDRAW",
-      status: "COMPLETED", // mock completes immediately
+      status: requires ? "PENDING_APPROVAL" : "COMPLETED",
       amount: input.amount,
       currency: "USD",
       fromWalletId: input.walletId,
       toWalletId: null,
       actorId: user.id,
-      requiresApproval: false,
+      requiresApproval: requires,
       approvedBy: null,
       approvedAt: null,
       approvalReason: null,
@@ -337,7 +357,6 @@ export function useMockStore() {
       updatedAt: now(),
     };
     db.transactions.push(t);
-    updateBalancesForCompletion(t);
     appendAudit({
       actorId: user.id,
       actorEmail: user.email,
@@ -358,6 +377,12 @@ export function useMockStore() {
       reasonCodes: policyRes.reasonCodes,
       payload: { decision: policyRes.decision, explain: policyRes.explain },
     });
+
+    if (!requires) {
+      policy.commitDaily(input.walletId, input.amount);
+      updateBalancesForCompletion(t);
+    }
+
     return envelope({
       id: t.id,
       status: t.status,
