@@ -51,7 +51,7 @@ export default function Dashboard() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-        <Card className="surface-1 card-sheen card-hover glow-green w-full">
+        <Card className="surface-1 card-sheen card-hover w-full">
           <CardContent className="py-0">
             <ActionCard
               title="Fund"
@@ -63,7 +63,7 @@ export default function Dashboard() {
             />
           </CardContent>
         </Card>
-        <Card className="surface-1 card-sheen card-hover glow-blue w-full">
+        <Card className="surface-1 card-sheen card-hover w-full">
           <CardContent className="py-0">
             <ActionCard
               title="Send"
@@ -75,7 +75,7 @@ export default function Dashboard() {
             />
           </CardContent>
         </Card>
-        <Card className="surface-1 card-sheen card-hover glow-orange w-full">
+        <Card className="surface-1 card-sheen card-hover w-full">
           <CardContent className="py-0">
             <ActionCard
               title="Withdraw"
