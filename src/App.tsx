@@ -24,6 +24,11 @@ import AdminSettings from "./pages/AdminSettings";
 import AuditTrail from "./pages/AuditTrail";
 import AppShell from "./components/layout/AppShell";
 import ConnectivityProbe from "./pages/ConnectivityProbe";
+import VerifyPending from "./pages/VerifyPending";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import ProtectedRoute from "./components/route/ProtectedRoute";
+import AdminRoute from "./components/route/AdminRoute";
 
 const queryClient = new QueryClient();
 
@@ -36,29 +41,39 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
+              {/* Public auth-related routes */}
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/verify" element={<VerifyPending />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+
+              {/* App shell and protected routes */}
               <Route element={<AppShell />}>
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/mint" element={<Fund />} />
-                <Route path="/transfer" element={<Send />} />
-                <Route path="/redeem" element={<Withdraw />} />
-                <Route path="/policy-rules" element={<PolicyRules />} />
-                <Route path="/activity-log" element={<ActivityLog />} />
-                <Route path="/webhooks" element={<Webhooks />} />
-                <Route path="/wallets" element={<Wallets />} />
-                <Route path="/users" element={<Users />} />
-                <Route path="/admin-settings" element={<AdminSettings />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/connectivity-probe" element={<ConnectivityProbe />} />
-                {/* Legacy redirects to new pages */}
+
+                {/* Protected app pages */}
+                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/mint" element={<ProtectedRoute><Fund /></ProtectedRoute>} />
+                <Route path="/transfer" element={<ProtectedRoute><Send /></ProtectedRoute>} />
+                <Route path="/redeem" element={<ProtectedRoute><Withdraw /></ProtectedRoute>} />
+                <Route path="/policy-rules" element={<ProtectedRoute><PolicyRules /></ProtectedRoute>} />
+                <Route path="/activity-log" element={<ProtectedRoute><ActivityLog /></ProtectedRoute>} />
+                <Route path="/webhooks" element={<ProtectedRoute><Webhooks /></ProtectedRoute>} />
+                <Route path="/wallets" element={<ProtectedRoute><Wallets /></ProtectedRoute>} />
+                <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                <Route path="/connectivity-probe" element={<ProtectedRoute><ConnectivityProbe /></ProtectedRoute>} />
+
+                {/* Admin-only */}
+                <Route path="/users" element={<ProtectedRoute><AdminRoute><Users /></AdminRoute></ProtectedRoute>} />
+                <Route path="/admin-settings" element={<ProtectedRoute><AdminRoute><AdminSettings /></AdminRoute></ProtectedRoute>} />
+
+                {/* Legacy redirects */}
                 <Route path="/fund" element={<Navigate to="/mint" replace />} />
                 <Route path="/send" element={<Navigate to="/transfer" replace />} />
                 <Route path="/withdraw" element={<Navigate to="/redeem" replace />} />
                 <Route path="/audit-trail" element={<Navigate to="/activity-log" replace />} />
                 <Route path="/release-queue" element={<Navigate to="/policy-rules" replace />} />
-                {/* Existing page retained if navigated directly */}
-                <Route path="/audit" element={<AuditTrail />} />
+                <Route path="/audit" element={<ProtectedRoute><AuditTrail /></ProtectedRoute>} />
                 {/* Catch-all */}
                 <Route path="*" element={<NotFound />} />
               </Route>
