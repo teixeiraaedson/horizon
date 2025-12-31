@@ -4,23 +4,21 @@
 
 @import "./styles/theme.css";
 
-// Add global dark tokens and apply them to the root elements
 @layer base {
   :root {
-    /* shadcn/ui dark HSL tokens */
-    --background: 220 50% 4%;
+    --background: 222 47% 7%;
     --foreground: 210 40% 98%;
 
-    --card: 220 40% 14%;
+    --card: 222 47% 11%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 220 40% 14%;
+    --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 199 90% 60%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 220 35% 16%;
+    --secondary: 220 35% 14%;
     --secondary-foreground: 210 40% 98%;
 
     --muted: 220 30% 16%;
@@ -38,7 +36,7 @@
 
     --radius: 0.75rem;
 
-    /* Optional: sidebar tokens used by shadcn sidebar */
+    /* Sidebar tokens retained for compatibility */
     --sidebar-background: 220 40% 10%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 199 90% 60%;
@@ -50,20 +48,19 @@
   }
 
   .dark {
-    /* Mirror dark values under .dark to ensure class-based activation */
-    --background: 220 50% 4%;
+    --background: 222 47% 7%;
     --foreground: 210 40% 98%;
 
-    --card: 220 40% 14%;
+    --card: 222 47% 11%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 220 40% 14%;
+    --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 199 90% 60%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 220 35% 16%;
+    --secondary: 220 35% 14%;
     --secondary-foreground: 210 40% 98%;
 
     --muted: 220 30% 16%;
@@ -93,9 +90,17 @@
     color-scheme: dark;
   }
 
-  /* Apply token-based background and text to root elements */
   html, body, #root {
     background: hsl(var(--background));
     color: hsl(var(--foreground));
   }
 }
+
+/* TEMP SAFETY (during verification) */
+html.dark,
+html.dark body {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+/* REMOVED: prior hard-probe that forced solid background/text with !important */
