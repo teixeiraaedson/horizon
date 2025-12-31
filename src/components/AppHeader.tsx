@@ -28,7 +28,7 @@ export const AppHeader = () => {
 
   return (
     <div className="sticky top-0 z-20 border-b border-border bg-[rgba(11,18,32,0.85)]">
-      <div className="h-14 sm:h-16 px-4 flex items-center justify-between">
+      <div className="h-14 sm:h-16 px-4 flex items-center justify-between py-2">
         {/* Left: small logo + page title/subtitle */}
         <div className="flex items-center gap-3 min-w-0">
           <img src={logo} alt="Horizon" className="h-5 w-auto" />
