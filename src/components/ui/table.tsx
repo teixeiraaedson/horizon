@@ -20,16 +20,24 @@ const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <thead
+  <thead ref={ref} className={cn("[&_tr]:border-b [&_tr]:border-[var(--hz-border)] bg-[rgba(148,163,184,0.08)]", className)} {...props} />
+));
+TableHeader.displayName = "TableHeader";
+
+const TableRow = React.forwardRef<
+  HTMLTableRowElement,
+  React.HTMLAttributes<HTMLTableRowElement>
+>(({ className, ...props }, ref) => (
+  <tr
     ref={ref}
     className={cn(
-      "[&_tr]:border-b [&_tr]:border-[var(--hz-border)] bg-[rgba(148,163,184,0.08)]",
+      "border-b border-[var(--hz-border)] transition-colors hover:bg-[rgba(56,189,248,0.06)] data-[state=selected]:bg-muted",
       className,
     )}
     {...props}
   />
 ));
-TableHeader.displayName = "TableHeader";
+TableRow.displayName = "TableRow";
 
 const TableBody = React.forwardRef<
   HTMLTableSectionElement,
@@ -57,21 +65,6 @@ const TableFooter = React.forwardRef<
   />
 ));
 TableFooter.displayName = "TableFooter";
-
-const TableRow = React.forwardRef<
-  HTMLTableRowElement,
-  React.HTMLAttributes<HTMLTableRowElement>
->(({ className, ...props }, ref) => (
-  <tr
-    ref={ref}
-    className={cn(
-      "border-b border-[var(--hz-border)] transition-colors hover:bg-[rgba(56,189,248,0.06)] data-[state=selected]:bg-muted",
-      className,
-    )}
-    {...props}
-  />
-));
-TableRow.displayName = "TableRow";
 
 const TableHead = React.forwardRef<
   HTMLTableCellElement,
