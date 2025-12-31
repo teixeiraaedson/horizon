@@ -68,7 +68,18 @@ const SidebarProvider = React.forwardRef<
     const isMobile = useIsMobile();
     const [openMobile, setOpenMobile] = React.useState(false);
 
-    const [_open, _setOpen] = React.useState(defaultOpen);
+    // Initialize expanded on desktop, collapsed on tablet, drawer on mobile
+    const initialOpen = React.useMemo(() => {
+      if (typeof window !== "undefined") {
+        const w = window.innerWidth;
+        if (w >= 1024) return true; // lg
+        if (w >= 768) return false; // md collapsed
+        return false; // sm uses drawer
+      }
+      return defaultOpen;
+    }, []);
+
+    const [_open, _setOpen] = React.useState(initialOpen);
     const open = openProp ?? _open;
     const setOpen = React.useCallback(
       (value: boolean | ((value: boolean) => boolean)) => {
@@ -84,7 +95,7 @@ const SidebarProvider = React.forwardRef<
     );
 
     const toggleSidebar = React.useCallback(() => {
-      return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open);
+      return isMobile ? setOpenMobile((o) => !o) : setOpen((o) => !o);
     }, [isMobile, setOpen, setOpenMobile]);
 
     React.useEffect(() => {
@@ -113,17 +124,29 @@ const SidebarProvider = React.forwardRef<
       [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
     );
 
-    // Single grid container; desktop: 260px 1fr; mobile: single column
-    const gridCols = isMobile ? "grid-cols-1" : "grid-cols-[var(--sidebar-width)_1fr]";
+    // Grid columns adapt by state at desktop/tablet; single column on mobile
+    const gridCols =
+      isMobile
+        ? "grid-cols-1"
+        : state === "collapsed"
+          ? "md:grid-cols-[var(--sidebar-width-icon)_1fr] lg:grid-cols-[var(--sidebar-width-icon)_1fr]"
+          : "md:grid-cols-[var(--sidebar-width)_1fr] lg:grid-cols-[var(--sidebar-width)_1fr]";
 
     return (
       <SidebarContext.Provider value={contextValue}>
         <TooltipProvider delayDuration={0}>
           <div
-            style={{ "--sidebar-width": SIDEBAR_WIDTH, "--sidebar-width-icon": SIDEBAR_WIDTH_ICON, ...style } as React.CSSProperties}
+            style={
+              {
+                "--sidebar-width": SIDEBAR_WIDTH,
+                "--sidebar-width-icon": SIDEBAR_WIDTH_ICON,
+                ...style,
+              } as React.CSSProperties
+            }
             className={cn(
-              "app-shell grid min-h-screen w-full overflow-hidden", // root prevents double scroll
+              "app-shell grid min-h-screen w-full overflow-hidden",
               gridCols,
+              state === "collapsed" ? "isCollapsed" : "",
               className,
             )}
             ref={ref}
@@ -147,16 +170,23 @@ const Sidebar = React.forwardRef<
   }
 >(
   (
-    { side = "left", variant = "sidebar", collapsible = "offcanvas", className, children, ...props },
+    {
+      side = "left",
+      variant = "sidebar",
+      collapsible = "offcanvas",
+      className,
+      children,
+      ...props
+    },
     ref,
   ) => {
-    const { isMobile } = useSidebar();
+    const { isMobile, openMobile, setOpenMobile } = useSidebar();
 
     if (collapsible === "none") {
       return (
         <div
           className={cn(
-            "h-[100vh] overflow-y-auto min-w-0 bg-sidebar text-sidebar-foreground border-r border-sidebar-border p-2", // independent scroll
+            "h-[100vh] overflow-y-auto min-w-0 bg-sidebar text-sidebar-foreground border-r border-sidebar-border p-2",
             className,
           )}
           ref={ref}
@@ -169,7 +199,7 @@ const Sidebar = React.forwardRef<
 
     if (isMobile) {
       return (
-        <Sheet open={useSidebar().openMobile} onOpenChange={useSidebar().setOpenMobile} {...props}>
+        <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"
@@ -183,7 +213,7 @@ const Sidebar = React.forwardRef<
       );
     }
 
-    // Desktop/tablet: normal grid child, non-sticky/non-fixed
+    // Desktop/tablet: grid child with its own scroll region
     return (
       <div
         ref={ref}
@@ -263,7 +293,7 @@ const SidebarInset = React.forwardRef<
     <main
       ref={ref}
       className={cn(
-        "h-[100vh] overflow-y-auto overflow-x-hidden w-full max-w-full min-w-0 bg-background", // independent scroll
+        "h-[100vh] overflow-y-auto overflow-x-hidden w-full max-w-full min-w-0 bg-background",
         className,
       )}
       {...props}

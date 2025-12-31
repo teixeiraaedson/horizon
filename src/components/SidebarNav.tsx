@@ -65,12 +65,11 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
                     <SidebarMenuButton
                       asChild
                       isActive={active}
-                      className={cn("sidebar-link", active && "sidebar-link-active")}
+                      tooltip={it.label}
+                      className={cn(active ? "sidebar-link-active" : "sidebar-link", "transition-colors")}
                     >
                       <NavLink to={it.to}>
-                        {React.cloneElement(it.icon as React.ReactElement, {
-                          className: "h-4 w-4 text-inherit",
-                        })}
+                        {React.cloneElement(it.icon as React.ReactElement, { className: "h-4 w-4 text-inherit" })}
                         <span className="text-inherit">{it.label}</span>
                       </NavLink>
                     </SidebarMenuButton>
@@ -82,9 +81,7 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
         </SidebarContent>
         <SidebarFooter className="border-t border-[color:var(--hz-border)]">
           <div className="p-2">
-            <button
-              className="w-full text-left text-[12px] px-3 py-2 rounded-lg border border-[color:var(--hz-border)] bg-[rgba(148,163,184,0.08)] hover:border-[color:var(--hz-border-strong)] card-sheen inline-flex items-center gap-2"
-            >
+            <button className="w-full text-left text-[12px] px-3 py-2 rounded-lg border border-[color:var(--hz-border)] bg-[rgba(148,163,184,0.08)] hover:border-[color:var(--hz-border-strong)] card-sheen inline-flex items-center gap-2">
               <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: "var(--hz-orange)" }} />
               <span className="text-[color:var(--hz-text)]">Sandbox Mode</span>
             </button>
@@ -95,10 +92,7 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
               </div>
               <div className="mt-2 flex items-center justify-between">
                 <span className="truncate">{user?.email ?? "guest"}</span>
-                <button
-                  className="inline-flex items-center gap-1 text-[color:var(--hz-muted)] hover:text-[color:var(--hz-text)]"
-                  onClick={() => signOut()}
-                >
+                <button className="inline-flex items-center gap-1 text-[color:var(--hz-muted)] hover:text-[color:var(--hz-text)]" onClick={() => signOut()}>
                   <LogOut className="h-4 w-4" />
                   <span>Sign out</span>
                 </button>
@@ -107,9 +101,7 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
           </div>
         </SidebarFooter>
       </Sidebar>
-      <SidebarInset className="bg-background">
-        {children}
-      </SidebarInset>
+      <SidebarInset className="bg-transparent">{children}</SidebarInset>
     </SidebarProvider>
   );
 };

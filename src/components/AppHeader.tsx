@@ -11,6 +11,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { SearchInput } from "@/components/SearchInput";
 import { useMockStore } from "@/mock/store";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 function pageMeta(pathname: string) {
   const base = { title: "Horizon", subtitle: "Treasury Management Suite" };
@@ -48,14 +49,18 @@ export const AppHeader = () => {
   return (
     <div className="topbar">
       <div className="px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          {/* Mobile hamburger to open drawer */}
+          <div className="md:hidden">
+            <SidebarTrigger />
+          </div>
           <img src={logo} className="h-7 w-auto" alt="Horizon Logo" />
           <div className="leading-tight">
             <div className="font-semibold tracking-wide">Horizon</div>
             <div className="text-xs text-muted-foreground -mt-0.5">Treasury Management Suite</div>
           </div>
           {settings.mockMode && <Badge className="ml-2" variant="secondary">Mock Mode</Badge>}
-          <div className="ml-6">
+          <div className="ml-4">
             <div className="text-lg font-semibold">{meta.title}</div>
             <div className="text-xs text-muted-foreground">{meta.subtitle}</div>
           </div>
