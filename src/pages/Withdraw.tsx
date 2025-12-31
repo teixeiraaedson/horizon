@@ -45,7 +45,10 @@ export default function Withdraw() {
       <PageShell>
         <CenteredCard maxWidth="2xl">
           <CardHeader>
-            <CardTitle>Withdraw</CardTitle>
+            <div>
+              <CardTitle>Redeem to Bank</CardTitle>
+              <div className="mt-1 text-sm text-muted-foreground">Withdraw stablecoin from wallet to bank</div>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -66,7 +69,7 @@ export default function Withdraw() {
                 <label className="block text-sm mb-1 text-muted-foreground">Bank Reference</label>
                 <Input className="input-dark" type="text" {...form.register("bankReference")} placeholder="Optional note" />
               </div>
-              <Button type="submit" className="hover:shadow-[0_0_24px_rgba(56,189,248,0.10)]">Withdraw</Button>
+              <Button type="submit" className="hover:shadow-[0_0_24px_rgba(56,189,248,0.10)]">Redeem to Bank</Button>
             </form>
           </CardContent>
         </CenteredCard>

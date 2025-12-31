@@ -45,7 +45,10 @@ export default function Fund() {
       <PageShell>
         <CenteredCard maxWidth="2xl">
           <CardHeader>
-            <CardTitle>Fund</CardTitle>
+            <div>
+              <CardTitle>Mint USDP</CardTitle>
+              <div className="mt-1 text-sm text-muted-foreground">Issue new stablecoin tokens to treasury</div>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -63,7 +66,7 @@ export default function Fund() {
                 <label className="block text-sm mb-1 text-muted-foreground">Amount (USD)</label>
                 <Input className="input-dark" type="number" step="1" {...form.register("amount", { valueAsNumber: true })} />
               </div>
-              <Button type="submit" className="hover:shadow-[0_0_24px_rgba(56,189,248,0.10)]">Fund</Button>
+              <Button type="submit" className="hover:shadow-[0_0_24px_rgba(56,189,248,0.10)]">Mint USDP</Button>
             </form>
           </CardContent>
         </CenteredCard>

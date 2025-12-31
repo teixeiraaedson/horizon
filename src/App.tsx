@@ -14,6 +14,9 @@ import { AuthProvider } from "./app/auth/AuthContext";
 import Mint from "./pages/Mint";
 import Transfer from "./pages/Transfer";
 import Redeem from "./pages/Redeem";
+import Fund from "./pages/Fund";
+import Send from "./pages/Send";
+import Withdraw from "./pages/Withdraw";
 import PolicyRules from "./pages/PolicyRules";
 import ActivityLog from "./pages/ActivityLog";
 import Users from "./pages/Users";
@@ -35,9 +38,9 @@ const App = () => (
               <Route element={<AppShell />}>
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/mint" element={<Mint />} />
-                <Route path="/transfer" element={<Transfer />} />
-                <Route path="/redeem" element={<Redeem />} />
+                <Route path="/mint" element={<Fund />} />
+                <Route path="/transfer" element={<Send />} />
+                <Route path="/redeem" element={<Withdraw />} />
                 <Route path="/policy-rules" element={<PolicyRules />} />
                 <Route path="/activity-log" element={<ActivityLog />} />
                 <Route path="/webhooks" element={<Webhooks />} />
