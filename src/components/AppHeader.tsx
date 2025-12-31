@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/app/auth/AuthContext";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Bell } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -59,11 +59,24 @@ export const AppHeader = () => {
                 <span className="hidden sm:inline truncate max-w-[160px]">{user?.email ?? "Guest"}</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => switchRole("user")}>Switch to User</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => switchRole("admin")}>Switch to Admin</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate("/auth")}>Sign in</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => signOut()}>Sign out</DropdownMenuItem>
+            <DropdownMenuContent align="end" className="bg-card border border-border p-2 min-w-[240px]">
+              <DropdownMenuLabel>
+                <div className="leading-tight">
+                  <div className="text-sm font-semibold">Horizon Ops</div>
+                  <div className="text-xs text-muted-foreground">{user?.email ?? "user@demo.horizon"}</div>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="hover:bg-muted/20" onClick={() => navigate("/users")}>
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem className="hover:bg-muted/20" onClick={() => navigate("/settings")}>
+                Settings
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="hover:bg-muted/20 text-red-500" onClick={() => signOut()}>
+                Log out
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
