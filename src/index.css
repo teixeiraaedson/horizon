@@ -36,7 +36,6 @@
 
     --radius: 0.75rem;
 
-    /* Sidebar tokens retained for compatibility */
     --sidebar-background: 220 40% 10%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 199 90% 60%;
@@ -90,9 +89,36 @@
     color-scheme: dark;
   }
 
+  /* Root sizing and single-scroll strategy */
+  html, body, #root {
+    height: 100%;
+  }
+  body {
+    overflow: hidden;
+  }
+
   html, body, #root {
     background: hsl(var(--background));
     color: hsl(var(--foreground));
+  }
+
+  /* Thin, subtle scrollbars (Paxos-like) */
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148,163,184,0.35) transparent;
+  }
+  /* WebKit */
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: rgba(148,163,184,0.35);
+    border-radius: 9999px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
   }
 }
 
