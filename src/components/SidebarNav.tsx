@@ -53,15 +53,19 @@ function SidebarFooterControls() {
   return <CollapseToggle collapsed={collapsed} onToggle={onToggle} />;
 }
 
-// NavLink closes mobile drawer on click; desktop remains unchanged
-function NavItemLink({ to, children }: { to: string; children: React.ReactNode }) {
+// REPLACED: NavItemLink to forward props (className, onClick, etc.)
+type NavItemLinkProps = React.ComponentProps<typeof NavLink>;
+function NavItemLink({ to, onClick, className, children, ...rest }: NavItemLinkProps) {
   const { isMobile, setOpenMobile } = useSidebar();
   return (
     <NavLink
       to={to}
-      onClick={() => {
+      className={className}
+      onClick={(e) => {
+        onClick?.(e);
         if (isMobile) setOpenMobile(false);
       }}
+      {...rest}
     >
       {children}
     </NavLink>
