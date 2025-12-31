@@ -26,6 +26,7 @@ import PolicyRules from "./pages/PolicyRules";
 import ActivityLog from "./pages/ActivityLog";
 import Users from "./pages/Users";
 import AdminSettings from "./pages/AdminSettings";
+import AppShell from "./components/layout/AppShell";
 
 const queryClient = new QueryClient();
 
@@ -38,33 +39,36 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route element={<AppShell />}>
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route path="/dashboard" element={<Dashboard />} />
 
-              {/* New Lovable-style routes */}
-              <Route path="/mint" element={<Mint />} />
-              <Route path="/transfer" element={<Transfer />} />
-              <Route path="/redeem" element={<Redeem />} />
-              <Route path="/policy-rules" element={<PolicyRules />} />
-              <Route path="/activity-log" element={<ActivityLog />} />
-              <Route path="/users" element={<Users />} />
-              <Route path="/admin-settings" element={<AdminSettings />} />
+                {/* New Lovable-style routes */}
+                <Route path="/mint" element={<Mint />} />
+                <Route path="/transfer" element={<Transfer />} />
+                <Route path="/redeem" element={<Redeem />} />
+                <Route path="/policy-rules" element={<PolicyRules />} />
+                <Route path="/activity-log" element={<ActivityLog />} />
+                <Route path="/webhooks" element={<Webhooks />} />
+                <Route path="/wallets" element={<Wallets />} />
+                <Route path="/users" element={<Users />} />
+                <Route path="/admin-settings" element={<AdminSettings />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/auth" element={<Auth />} />
 
-              {/* Legacy routes still exist; add redirects to new pages */}
-              <Route path="/fund" element={<Navigate to="/mint" replace />} />
-              <Route path="/send" element={<Navigate to="/transfer" replace />} />
-              <Route path="/withdraw" element={<Navigate to="/redeem" replace />} />
-              <Route path="/audit-trail" element={<Navigate to="/activity-log" replace />} />
-              <Route path="/release-queue" element={<Navigate to="/policy-rules" replace />} />
+                {/* Legacy redirects to new pages */}
+                <Route path="/fund" element={<Navigate to="/mint" replace />} />
+                <Route path="/send" element={<Navigate to="/transfer" replace />} />
+                <Route path="/withdraw" element={<Navigate to="/redeem" replace />} />
+                <Route path="/audit-trail" element={<Navigate to="/activity-log" replace />} />
+                <Route path="/release-queue" element={<Navigate to="/policy-rules" replace />} />
 
-              {/* Existing pages remain available */}
-              <Route path="/audit" element={<AuditTrail />} />
-              <Route path="/webhooks" element={<Webhooks />} />
-              <Route path="/wallets" element={<Wallets />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/auth" element={<Auth />} />
-              {/* Catch-all */}
-              <Route path="*" element={<NotFound />} />
+                {/* Existing pages retained (if navigated directly) */}
+                <Route path="/audit" element={<AuditTrail />} />
+
+                {/* Catch-all */}
+                <Route path="*" element={<NotFound />} />
+              </Route>
             </Routes>
           </BrowserRouter>
         </AuthProvider>
