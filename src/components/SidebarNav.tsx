@@ -78,7 +78,7 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
 
   return (
     <SidebarProvider>
-      <Sidebar collapsible="icon" className="bg-[var(--hz-surface0)] text-[var(--hz-text)] border-r border-[var(--hz-border)] h-[100vh] overflow-y-auto min-w-0 p-2">
+      <Sidebar collapsible="icon" className="bg-[var(--hz-surface0)] text-[var(--hz-text)] h-[100vh] overflow-y-auto min-w-0 p-2 border-r-0" style={{ borderRightWidth: 0 }}>
         <SidebarHeader className="px-2 pt-3 pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
