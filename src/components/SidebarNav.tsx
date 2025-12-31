@@ -16,7 +16,6 @@ import {
   SidebarTrigger,
   SidebarHeader,
   SidebarSeparator,
-  useSidebar,
 } from "@/components/ui/sidebar";
 import { LogOut, PanelLeft } from "lucide-react";
 import { useLocation } from "react-router-dom";
@@ -25,10 +24,28 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { navSections } from "@/components/sidebar/nav";
 
+const CollapseToggle = () => {
+  const { state, toggleSidebar } = require("@/components/ui/sidebar").useSidebar();
+  return (
+    <button
+      onClick={() => {
+        const collapsedNext = state === "expanded";
+        try {
+          localStorage.setItem("sidebarCollapsed", collapsedNext ? "true" : "false");
+        } catch {}
+        toggleSidebar();
+      }}
+      className="w-full text-left text-[12px] px-3 py-2 rounded-lg border border-[color:var(--hz-border)] bg-[rgba(148,163,184,0.08)] hover:border-[color:var(--hz-border-strong)] card-sheen inline-flex items-center gap-2"
+    >
+      <PanelLeft className="h-4 w-4" />
+      <span>Collapse</span>
+    </button>
+  );
+};
+
 export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const { user, signOut } = useAuth();
-  const { state, toggleSidebar } = useSidebar();
 
   return (
     <SidebarProvider>
@@ -36,7 +53,6 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
         <SidebarHeader className="px-2 pt-3 pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              {/* Inline brand mark */}
               <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
                 <circle cx="9" cy="9" r="7" fill="rgba(56,189,248,0.22)" />
                 <circle cx="9" cy="9" r="4" fill="rgba(56,189,248,0.35)" />
@@ -50,7 +66,6 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
           </div>
         </SidebarHeader>
         <SidebarSeparator />
-
         <SidebarContent>
           {navSections.map((section, idx) => (
             <React.Fragment key={section.id}>
@@ -85,26 +100,9 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
             </React.Fragment>
           ))}
         </SidebarContent>
-
         <SidebarFooter className="border-t border-[color:var(--hz-border)]">
           <div className="p-2 space-y-2">
-            {/* Collapse toggle */}
-            <button
-              onClick={() => {
-                const collapsedNext = state === "expanded";
-                // Persist collapsed state in localStorage for UX parity
-                try {
-                  localStorage.setItem("sidebarCollapsed", collapsedNext ? "true" : "false");
-                } catch {}
-                toggleSidebar();
-              }}
-              className="w-full text-left text-[12px] px-3 py-2 rounded-lg border border-[color:var(--hz-border)] bg-[rgba(148,163,184,0.08)] hover:border-[color:var(--hz-border-strong)] card-sheen inline-flex items-center gap-2"
-            >
-              <PanelLeft className="h-4 w-4" />
-              <span>Collapse</span>
-            </button>
-
-            {/* Signed in block */}
+            <CollapseToggle />
             <div className="mt-1 text-xs text-[color:var(--hz-muted)] space-y-2">
               <div className="flex items-center justify-between">
                 <span>Signed in as</span>
