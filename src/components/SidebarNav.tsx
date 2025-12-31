@@ -72,8 +72,8 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
   const location = useLocation();
   const { user, signOut } = useAuth();
 
-  // Compact item sizing and active styles (inline row)
-  const itemBase = "flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] leading-5 font-medium";
+  // Compact item sizing and active styles (single row)
+  const itemBase = "flex items-center gap-3 px-3 py-2 rounded-md text-[13px] leading-5 font-medium";
   const itemActive = "bg-slate-800/40 border border-slate-700/40";
   const itemInactive = "border border-transparent hover:bg-slate-900/40 hover:border-slate-700/40";
 
