@@ -1,35 +1,39 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getEnv, supabaseServer, hashToken, setSessionCookie, randomSessionToken } from './_shared';
-import { comparePassword } from '../../src/lib/auth/password';
+import { readJson, sendJson, sendError, requireEnv, supabaseServer, comparePassword, hashToken, setSessionCookie, randomSessionToken } from "../_lib";
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') return res.status(405).json({ error: { message: 'Method not allowed' } });
+export default async function handler(req: any, res: any) {
+  const envCheck = requireEnv(["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"]);
+  if (!("ok" in envCheck) || envCheck.ok === false) {
+    return sendError(res, 500, { code: "ENV_MISSING", message: "Missing env vars", details: envCheck.missing });
+  }
 
-  const { email, password } = req.body || {};
-  if (!email || !password) return res.status(400).json({ error: { message: 'Email and password are required' } });
+  if (req.method !== "POST") return sendError(res, 405, { code: "METHOD_NOT_ALLOWED", message: "Method not allowed" });
+
+  const body = await readJson(req);
+  const email = String(body?.email || "").trim();
+  const password = String(body?.password || "");
+
+  if (!email || !password) return sendError(res, 400, { code: "BAD_REQUEST", message: "Email and password are required" });
 
   const supabase = supabaseServer();
-  const { data: user } = await supabase.from('users').select('id,email,password_hash,email_verified_at,role').eq('email', email).maybeSingle();
-  if (!user) {
-    // Do not leak existence
-    return res.status(401).json({ error: { message: 'Invalid credentials.' } });
-  }
+  const { data: user } = await supabase
+    .from("users")
+    .select("id,email,password_hash,email_verified_at,role")
+    .eq("email", email)
+    .maybeSingle();
+
+  if (!user) return sendError(res, 401, { code: "INVALID_CREDENTIALS", message: "Invalid credentials." });
   const ok = await comparePassword(password, user.password_hash);
-  if (!ok) return res.status(401).json({ error: { message: 'Invalid credentials.' } });
+  if (!ok) return sendError(res, 401, { code: "INVALID_CREDENTIALS", message: "Invalid credentials." });
 
   if (!user.email_verified_at) {
-    return res.status(403).json({ error: { code: 'EMAIL_NOT_VERIFIED', message: 'Email not verified.' } });
+    return sendError(res, 403, { code: "EMAIL_NOT_VERIFIED", message: "Email not verified." });
   }
 
   const rawSession = randomSessionToken();
   const sessionHash = hashToken(rawSession);
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
-  await supabase.from('sessions').insert({
-    user_id: user.id,
-    session_hash: sessionHash,
-    expires_at: expiresAt
-  });
+  await supabase.from("sessions").insert({ user_id: user.id, session_hash: sessionHash, expires_at: expiresAt });
   setSessionCookie(res, rawSession, 7 * 24 * 60 * 60);
 
-  return res.status(200).json({ ok: true });
+  return sendJson(res, 200, { ok: true });
 }

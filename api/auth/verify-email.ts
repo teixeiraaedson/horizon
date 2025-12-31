@@ -1,46 +1,57 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getEnv, supabaseServer, hashToken, setSessionCookie, randomSessionToken } from './_shared';
-import { verifyToken } from '../../src/lib/auth/tokens';
+import { sendJson, sendError, requireEnv, supabaseServer, hashToken, verifyToken, setSessionCookie, randomSessionToken } from "../_lib";
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'GET') return res.status(405).json({ error: { message: 'Method not allowed' } });
+export default async function handler(req: any, res: any) {
+  const envCheck = requireEnv(["AUTH_TOKEN_SECRET", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"]);
+  if (!("ok" in envCheck) || envCheck.ok === false) {
+    return sendError(res, 500, { code: "ENV_MISSING", message: "Missing env vars", details: envCheck.missing });
+  }
 
-  const token = (req.query?.token as string) || '';
-  if (!token) return res.status(400).json({ error: { message: 'Missing token' } });
+  if (req.method !== "GET") return sendError(res, 405, { code: "METHOD_NOT_ALLOWED", message: "Method not allowed" });
 
-  const env = getEnv();
+  const token =
+    (req.query?.token as string) ||
+    ((() => {
+      try {
+        const u = new URL(req.url || "", "http://localhost");
+        return u.searchParams.get("token") || "";
+      } catch {
+        return "";
+      }
+    })());
+
+  if (!token) return sendError(res, 400, { code: "BAD_REQUEST", message: "Missing token" });
+
   let payload;
   try {
-    payload = await verifyToken(token, env.AUTH_TOKEN_SECRET);
+    payload = await verifyToken(token, process.env.AUTH_TOKEN_SECRET as string);
   } catch {
-    return res.status(400).json({ error: { message: 'Invalid or expired token.' } });
+    return sendError(res, 400, { code: "INVALID_TOKEN", message: "Invalid or expired token." });
   }
-  if (payload.purpose !== 'verify') {
-    return res.status(400).json({ error: { message: 'Invalid token purpose.' } });
+  if (payload.purpose !== "verify") {
+    return sendError(res, 400, { code: "INVALID_PURPOSE", message: "Invalid token purpose." });
   }
 
   const tokenHash = hashToken(token);
   const supabase = supabaseServer();
+  const { data: tok } = await supabase
+    .from("auth_tokens")
+    .select("id,user_id,type,expires_at,used_at")
+    .eq("token_hash", tokenHash)
+    .eq("type", "verify_email")
+    .maybeSingle();
 
-  const { data: tok } = await supabase.from('auth_tokens').select('id,user_id,type,expires_at,used_at').eq('token_hash', tokenHash).eq('type', 'verify_email').maybeSingle();
   if (!tok || tok.used_at || new Date(tok.expires_at) < new Date()) {
-    return res.status(400).json({ error: { message: 'Invalid or expired token.' } });
+    return sendError(res, 400, { code: "INVALID_TOKEN", message: "Invalid or expired token." });
   }
 
-  // Mark token used and verify the user
-  await supabase.from('auth_tokens').update({ used_at: new Date().toISOString() }).eq('id', tok.id);
-  await supabase.from('users').update({ email_verified_at: new Date().toISOString() }).eq('id', tok.user_id);
+  await supabase.from("auth_tokens").update({ used_at: new Date().toISOString() }).eq("id", tok.id);
+  await supabase.from("users").update({ email_verified_at: new Date().toISOString() }).eq("id", tok.user_id);
 
-  // Create session and set cookie
   const rawSession = randomSessionToken();
   const sessionHash = hashToken(rawSession);
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // 7 days
-  await supabase.from('sessions').insert({
-    user_id: tok.user_id,
-    session_hash: sessionHash,
-    expires_at: expiresAt
-  });
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  await supabase.from("sessions").insert({ user_id: tok.user_id, session_hash: sessionHash, expires_at: expiresAt });
   setSessionCookie(res, rawSession, 7 * 24 * 60 * 60);
 
-  return res.status(200).json({ ok: true });
+  return sendJson(res, 200, { ok: true });
 }

@@ -1,16 +1,20 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { supabaseServer, hashToken, clearSessionCookie } from './_shared';
+import { sendJson, sendError, requireEnv, supabaseServer, hashToken, clearSessionCookie, getSessionTokenFromReq } from "../_lib";
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') return res.status(405).json({ error: { message: 'Method not allowed' } });
+export default async function handler(req: any, res: any) {
+  const envCheck = requireEnv(["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"]);
+  if (!("ok" in envCheck) || envCheck.ok === false) {
+    return sendError(res, 500, { code: "ENV_MISSING", message: "Missing env vars", details: envCheck.missing });
+  }
 
-  const raw = (req.headers.cookie || '').match(/(?:^|;\s*)session_token=([^;]+)/);
-  const token = raw ? decodeURIComponent(raw[1]) : null;
+  if (req.method !== "POST") return sendError(res, 405, { code: "METHOD_NOT_ALLOWED", message: "Method not allowed" });
+
+  const token = getSessionTokenFromReq(req);
   if (token) {
     const supabase = supabaseServer();
     const sessionHash = hashToken(token);
-    await supabase.from('sessions').update({ revoked_at: new Date().toISOString() }).eq('session_hash', sessionHash);
+    await supabase.from("sessions").update({ revoked_at: new Date().toISOString() }).eq("session_hash", sessionHash);
   }
   clearSessionCookie(res);
-  return res.status(200).json({ ok: true });
+
+  return sendJson(res, 200, { ok: true });
 }
