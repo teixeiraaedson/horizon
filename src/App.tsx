@@ -23,6 +23,7 @@ import Users from "./pages/Users";
 import AdminSettings from "./pages/AdminSettings";
 import AuditTrail from "./pages/AuditTrail";
 import AppShell from "./components/layout/AppShell";
+import ConnectivityProbe from "./pages/ConnectivityProbe";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,7 @@ const App = () => (
                 <Route path="/admin-settings" element={<AdminSettings />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/connectivity-probe" element={<ConnectivityProbe />} />
                 {/* Legacy redirects to new pages */}
                 <Route path="/fund" element={<Navigate to="/mint" replace />} />
                 <Route path="/send" element={<Navigate to="/transfer" replace />} />

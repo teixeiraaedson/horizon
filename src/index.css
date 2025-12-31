@@ -8,34 +8,24 @@
   :root {
     --background: 222 47% 7%;
     --foreground: 210 40% 98%;
-
     --card: 222 47% 11%;
     --card-foreground: 210 40% 98%;
-
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
-
     --primary: 199 90% 60%;
     --primary-foreground: 210 40% 98%;
-
     --secondary: 220 35% 14%;
     --secondary-foreground: 210 40% 98%;
-
     --muted: 220 30% 16%;
     --muted-foreground: 215 16% 72%;
-
     --accent: 220 28% 18%;
     --accent-foreground: 210 40% 98%;
-
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 220 20% 20%;
     --input: 220 20% 20%;
     --ring: 199 90% 60%;
-
     --radius: 0.75rem;
-
     --sidebar-background: 220 40% 10%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 199 90% 60%;
@@ -49,34 +39,24 @@
   .dark {
     --background: 222 47% 7%;
     --foreground: 210 40% 98%;
-
     --card: 222 47% 11%;
     --card-foreground: 210 40% 98%;
-
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
-
     --primary: 199 90% 60%;
     --primary-foreground: 210 40% 98%;
-
     --secondary: 220 35% 14%;
     --secondary-foreground: 210 40% 98%;
-
     --muted: 220 30% 16%;
     --muted-foreground: 215 16% 72%;
-
     --accent: 220 28% 18%;
     --accent-foreground: 210 40% 98%;
-
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 220 20% 20%;
     --input: 220 20% 20%;
     --ring: 199 90% 60%;
-
     --radius: 0.75rem;
-
     --sidebar-background: 220 40% 10%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 199 90% 60%;
@@ -85,64 +65,19 @@
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 220 20% 20%;
     --sidebar-ring: 199 90% 60%;
-
     color-scheme: dark;
   }
 
-  /* Root sizing and single-scroll strategy */
-  html, body, #root {
-    height: 100%;
-  }
-  body {
-    overflow: hidden;
-  }
+  html, body, #root { height: 100%; }
+  body { overflow: hidden; }
+  html, body, #root { background: hsl(var(--background)); color: hsl(var(--foreground)); }
 
-  html, body, #root {
-    background: hsl(var(--background));
-    color: hsl(var(--foreground));
-  }
-
-  /* Thin, subtle scrollbars (Paxos-like) */
-  /* Firefox */
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(148,163,184,0.35) transparent;
-  }
-  /* WebKit */
-  *::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-  *::-webkit-scrollbar-thumb {
-    background-color: rgba(148,163,184,0.35);
-    border-radius: 9999px;
-  }
-  *::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  /* Ultra-thin scrollbar for the sidebar only */
-  .thin-scrollbar {
-    scrollbar-width: thin; /* Firefox */
-  }
-  .thin-scrollbar::-webkit-scrollbar {
-    width: 2px; /* WebKit */
-    height: 2px;
-  }
-  .thin-scrollbar::-webkit-scrollbar-thumb {
-    background-color: rgba(148,163,184,0.35);
-    border-radius: 9999px;
-  }
-  .thin-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-  }
+  /* Thin, subtle scrollbars */
+  * { scrollbar-width: thin; scrollbar-color: rgba(148,163,184,0.35) transparent; }
+  *::-webkit-scrollbar { width: 8px; height: 8px; }
+  *::-webkit-scrollbar-thumb { background-color: rgba(148,163,184,0.35); border-radius: 9999px; }
+  *::-webkit-scrollbar-track { background: transparent; }
 }
 
-/* TEMP SAFETY (during verification) */
 html.dark,
-html.dark body {
-  background: hsl(var(--background));
-  color: hsl(var(--foreground));
-}
-
-/* REMOVED: prior hard-probe that forced solid background/text with !important */
+html.dark body { background: hsl(var(--background)); color: hsl(var(--foreground)); }

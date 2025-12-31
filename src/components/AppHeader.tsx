@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { SearchInput } from "@/components/SearchInput";
 import { useMockStore } from "@/mock/store";
 import { pageMeta } from "@/lib/pageMeta";
+import ExportEvidence from "@/components/ExportEvidence";
 
 export const AppHeader = () => {
   const { user, signOut } = useAuth();
@@ -38,6 +39,7 @@ export const AppHeader = () => {
 
         {/* Right: search, bell, avatar */}
         <div className="flex items-center gap-3">
+          <ExportEvidence />
           <SearchInput value={q} onChange={setQ} placeholder="Search..." />
           <Button variant="ghost" size="icon" aria-label="Notifications">
             <div className="relative">

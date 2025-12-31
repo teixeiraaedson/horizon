@@ -9,7 +9,7 @@ type PageLayoutProps = {
 };
 
 /**
- * PageLayout centers forms like Paxos (`center`) or provides a wide content shell (`wide`).
+ * PageLayout centers forms (center) or provides a wide content shell (wide).
  * - center: outer flex justify-center; inner max-w-2xl; top padding.
  * - wide: max-w-6xl container centered; responsive padding.
  */
