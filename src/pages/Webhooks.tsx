@@ -11,6 +11,7 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@
 import { useToast } from "@/components/ui/use-toast";
 import { useMockStore } from "@/mock/store";
 import { useAuth } from "@/app/auth/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const PROJECT_ID = "vbofqbuztblknzialrdp";
 const RECEIVER_URL = `https://${PROJECT_ID}.supabase.co/functions/v1/webhook-receiver`;
@@ -26,20 +27,44 @@ type EventType =
 
 export default function Webhooks() {
   const { toast } = useToast();
-  const store = useMockStore();
   const { user } = useAuth();
-  const [rows, setRows] = useState(store.listWebhooks().data);
+  const [rows, setRows] = useState<any[]>([]);
   const [transactionId, setTransactionId] = useState("");
   const [eventType, setEventType] = useState<EventType>("settlement.completed");
 
   const isAdmin = (user?.role ?? "user") === "admin";
 
-  const refresh = () => {
-    setRows(store.listWebhooks().data);
+  const refresh = async () => {
+    const { data, error } = await supabase
+      .from("webhook_events")
+      .select("*")
+      .order("received_at", { ascending: false });
+
+    if (error) {
+      toast({ title: "Load error", description: error.message });
+      return;
+    }
+    setRows(data ?? []);
   };
 
   useEffect(() => {
     refresh();
+    // Realtime subscription to webhook_events inserts
+    const channel = supabase
+      .channel("webhook-events")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "webhook_events" },
+        (_payload) => {
+          // Fetch latest list on new insert
+          refresh();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const simulate = async () => {
@@ -75,7 +100,7 @@ export default function Webhooks() {
       return;
     }
     const txId = row?.payload?.data?.transaction_id;
-    const type = row?.eventType || row?.event_type;
+    const type = row?.event_type ?? row?.eventType;
     if (!txId || !type) {
       toast({ title: "Invalid event", description: "Missing transaction or event type." });
       return;
@@ -147,15 +172,15 @@ export default function Webhooks() {
                     <TableCell colSpan={5} className="py-8 text-center text-muted-foreground">No events yet</TableCell>
                   </TableRow>
                 )}
-                {rows.map((r: any) => (
-                  <TableRow key={r.id}>
-                    <TableCell className="whitespace-nowrap">{new Date(r.createdAt ?? r.created_at ?? r.receivedAt).toLocaleString()}</TableCell>
-                    <TableCell className="whitespace-nowrap">{r.eventType ?? r.event_type}</TableCell>
-                    <TableCell className="whitespace-nowrap">{r.payload?.data?.transaction_id ?? "—"}</TableCell>
-                    <TableCell className="whitespace-nowrap">{r.status}</TableCell>
+                {rows.map((row: any) => (
+                  <TableRow key={row.id}>
+                    <TableCell className="whitespace-nowrap">{new Date(row.received_at ?? row.created_at).toLocaleString()}</TableCell>
+                    <TableCell className="whitespace-nowrap">{row.event_type}</TableCell>
+                    <TableCell className="whitespace-nowrap">{row.payload?.data?.transaction_id ?? "—"}</TableCell>
+                    <TableCell className="whitespace-nowrap">{row.status}</TableCell>
                     <TableCell className="space-x-2">
-                      <Button variant="outline" size="sm" onClick={() => replay(r)} disabled={!isAdmin}>Replay</Button>
-                      <Button variant="ghost" size="sm" onClick={() => toast({ title: "Payload", description: JSON.stringify(r.payload ?? {}, null, 2) })}>View</Button>
+                      <Button variant="outline" size="sm" onClick={() => replay(row)} disabled={!isAdmin}>Replay</Button>
+                      <Button variant="ghost" size="sm" onClick={() => toast({ title: "Payload", description: JSON.stringify(row.payload ?? {}, null, 2) })}>View</Button>
                     </TableCell>
                   </TableRow>
                 ))}
