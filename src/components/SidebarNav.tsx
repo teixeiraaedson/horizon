@@ -72,8 +72,8 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
   const location = useLocation();
   const { user, signOut } = useAuth();
 
-  // Compact item sizing and active styles (single row)
-  const itemBase = "flex items-center gap-3 px-3 py-2 rounded-md text-[13px] leading-5 font-medium";
+  // Compact item sizing and active styles (single row on the clickable element)
+  const itemBase = "inline-flex w-full items-center gap-3 px-3 py-2 rounded-md text-[13px] leading-5 font-medium";
   const itemActive = "bg-slate-800/40 border border-slate-700/40";
   const itemInactive = "border border-transparent hover:bg-slate-900/40 hover:border-slate-700/40";
 
@@ -121,7 +121,7 @@ export const AppSidebarLayout = ({ children }: { children: React.ReactNode }) =>
                             {React.cloneElement(it.icon as React.ReactElement, {
                               className: "h-4 w-4 shrink-0 text-slate-300",
                             })}
-                            <span className="truncate whitespace-nowrap text-[13px] leading-5 font-medium text-slate-200/90 group-data-[collapsible=icon]:hidden">
+                            <span className="truncate whitespace-nowrap text-[13px] leading-5 font-medium text-slate-200/90 group-data-[collapsible=icon]:hidden flex-1 min-w-0">
                               {it.label}
                             </span>
                           </NavItemLink>
