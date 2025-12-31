@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -18,17 +18,13 @@ import {
   SidebarSeparator,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { LogOut, PanelLeft, ChevronLeft, ChevronRight } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { LogOut, ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuth } from "@/app/auth/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { navSections } from "@/components/sidebar/nav";
 
-type CollapseToggleProps = {
-  collapsed: boolean;
-  onToggle: () => void;
-};
+type CollapseToggleProps = { collapsed: boolean; onToggle: () => void };
 
 function CollapseToggle({ collapsed, onToggle }: CollapseToggleProps) {
   return (
@@ -56,6 +52,7 @@ function SidebarFooterControls() {
   return <CollapseToggle collapsed={collapsed} onToggle={onToggle} />;
 }
 
+// NavLink that only closes mobile drawer on click; desktop remains unchanged
 function NavItemLink({ to, children }: { to: string; children: React.ReactNode }) {
   const { isMobile, setOpenMobile } = useSidebar();
   return (
