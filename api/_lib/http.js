@@ -23,6 +23,29 @@ function readJson(req) {
   });
 }
 
+function parseCookies(req) {
+  try {
+    const header = (req && req.headers && req.headers.cookie) || "";
+    if (!header) return {};
+    const parts = header.split(";").map((v) => v.trim()).filter(Boolean);
+    const out = {};
+    for (const part of parts) {
+      const idx = part.indexOf("=");
+      if (idx === -1) continue;
+      const k = part.slice(0, idx);
+      const v = part.slice(idx + 1);
+      try {
+        out[k] = decodeURIComponent(v);
+      } catch {
+        out[k] = v;
+      }
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
 function sendJson(res, code, payload) {
   try {
     if (typeof res.status === "function") res.status(code);
@@ -36,7 +59,8 @@ function sendJson(res, code, payload) {
 }
 
 function sendError(res, code, error) {
+  // ALWAYS JSON
   sendJson(res, code, { error });
 }
 
-module.exports = { readJson, sendJson, sendError };
+module.exports = { readJson, parseCookies, sendJson, sendError };

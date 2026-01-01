@@ -3,6 +3,7 @@ const { SignJWT, jwtVerify } = require("jose");
 const bcrypt = require("bcryptjs");
 const { Resend } = require("resend");
 const { createClient } = require("@supabase/supabase-js");
+const { parseCookies } = require("./http");
 
 function supabaseServer() {
   const url = process.env.SUPABASE_URL;
@@ -20,19 +21,18 @@ function randomSessionToken() {
 
 function setSessionCookie(res, rawToken, maxAgeSeconds) {
   const expires = new Date(Date.now() + maxAgeSeconds * 1000).toUTCString();
-  const cookie = `session_token=${rawToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAgeSeconds}; Expires=${expires}; Secure`;
+  const cookie = `hz_session=${rawToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAgeSeconds}; Expires=${expires}; Secure`;
   res.setHeader("Set-Cookie", cookie);
 }
 
 function clearSessionCookie(res) {
-  const cookie = `session_token=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure`;
+  const cookie = `hz_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Secure`;
   res.setHeader("Set-Cookie", cookie);
 }
 
 function getSessionTokenFromReq(req) {
-  const raw = (req.headers && req.headers.cookie) || "";
-  const match = raw.match(/(?:^|;\s*)session_token=([^;]+)/);
-  return match ? decodeURIComponent(match[1]) : null;
+  const cookies = parseCookies(req);
+  return cookies["hz_session"] || null;
 }
 
 async function signToken(payload, secret) {
