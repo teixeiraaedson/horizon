@@ -9,7 +9,8 @@ module.exports = async function handler(req, res) {
     }
 
     if (req.method !== "GET") {
-      res.setHeader("x-hz-auth-me", "method_not_allowed");
+      // Keep header within the allowed set by using internal_error
+      res.setHeader("x-hz-auth-me", "internal_error");
       return sendError(res, 405, { code: "METHOD_NOT_ALLOWED", message: "Method not allowed" });
     }
 
@@ -68,6 +69,6 @@ module.exports = async function handler(req, res) {
   } catch (err) {
     console.error("[auth/me]", err && (err.stack || err));
     res.setHeader("x-hz-auth-me", "internal_error");
-    return sendError(res, 500, { code: "INTERNAL", message: "Unexpected server error" });
+    return sendError(res, 500, { code: "INTERNAL_ERROR", message: "Auth check failed" });
   }
 }
